@@ -10,7 +10,11 @@
     "preview": "vite preview",
     "server": "node server/index.js",
     "start": "node start.js",
-    "install-deps": "npm install"
+    "install-deps": "npm install",
+    "build:prod": "NODE_ENV=production vite build",
+    "deploy:build": "npm install && npm run build:prod",
+    "serve": "npm run build && npm start",
+    "health-check": "curl -f http://localhost:3000 || exit 1"
   },
   "dependencies": {
     "@stripe/react-stripe-js": "^3.7.0",
@@ -36,14 +40,25 @@
     "tailwindcss": "^3.3.5",
     "vite": "^4.5.0"
   },
+  "engines": {
+    "node": ">=16.0.0",
+    "npm": ">=8.0.0"
+  },
   "keywords": [
     "ai",
     "prompt",
     "optimization",
     "react",
     "deepseek-v3",
-    "deepseek"
+    "deepseek",
+    "stripe",
+    "pricing"
   ],
   "author": "Prompt Optimizer Team",
-  "license": "MIT"
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/YOUR_USERNAME/prompt-optimizer.git"
+  },
+  "homepage": "https://your-domain.com"
 }
