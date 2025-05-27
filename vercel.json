@@ -3,6 +3,14 @@
   "name": "prompt-optimizer",
   "buildCommand": "npm run build",
   "outputDirectory": "dist",
+  "github": {
+    "autoDeployment": true
+  },
+  "git": {
+    "deploymentEnabled": {
+      "deploy": true
+    }
+  },
   "routes": [
     {
       "src": "/(.*)",
