@@ -82,20 +82,15 @@ export const SubscriptionProvider = ({ children }) => {
     return Math.max(0, usage.limit - usage.current)
   }
 
-  const getPlanName = () => {
-    if (!subscription) {
-      return null
+  const getPlanName = (priceId) => {
+    const planNames = {
+      'price_personal_monthly': 'Personal (Monthly)',
+      'price_personal_yearly': 'Personal (Yearly)',
+      'price_professional_monthly': 'Professional (Monthly)',
+      'price_professional_yearly': 'Professional (Yearly)',
     }
     
-    // 根据Stripe价格ID或产品ID确定计划名称
-    const planMapping = {
-      'price_personal_monthly': '个人版 (月付)',
-      'price_personal_yearly': '个人版 (年付)',
-      'price_professional_monthly': '专业版 (月付)',
-      'price_professional_yearly': '专业版 (年付)',
-    }
-    
-    return planMapping[subscription.items?.data?.[0]?.price?.id] || '未知计划'
+    return planNames[priceId] || 'Unknown Plan'
   }
 
   const isSubscriptionActive = () => {

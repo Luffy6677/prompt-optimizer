@@ -1,6 +1,6 @@
 import React from 'react'
 import { motion } from 'framer-motion'
-import { Brain, Sparkles } from 'lucide-react'
+import { Brain, Sparkles, Clock } from 'lucide-react'
 
 const LoadingAnimation = () => {
   return (
@@ -20,52 +20,41 @@ const LoadingAnimation = () => {
           <Brain className="w-8 h-8 text-white" />
         </motion.div>
         
-        <h3 className="text-lg font-semibold text-gray-900 mb-2">
-          AI正在分析您的提示词
-        </h3>
+        <motion.h3
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          className="text-xl font-semibold text-gray-900 mb-2"
+        >
+          AI is analyzing your prompt
+        </motion.h3>
         
-        <div className="space-y-2 mb-6">
-          {['分析语言结构...', '识别优化点...', '生成改进建议...'].map((text, index) => (
-            <motion.p
+        <div className="flex items-center justify-center space-x-2 mb-4">
+          {['Analyzing language structure...', 'Identifying optimization points...', 'Generating improvement suggestions...'].map((text, index) => (
+            <motion.span
               key={index}
-              initial={{ opacity: 0, x: -20 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ 
-                delay: index * 0.5,
-                duration: 0.5,
-                repeat: Infinity,
-                repeatType: "reverse",
-                repeatDelay: 1.5
+              initial={{ opacity: 0.3 }}
+              animate={{ 
+                opacity: currentStep === index ? 1 : 0.3,
+                scale: currentStep === index ? 1.05 : 1
               }}
-              className="text-gray-600 text-sm"
+              className="text-sm text-gray-600"
             >
               {text}
-            </motion.p>
+            </motion.span>
           ))}
         </div>
-        
-        {/* Progress Dots */}
-        <div className="flex justify-center space-x-2">
-          {[0, 1, 2].map((index) => (
-            <motion.div
-              key={index}
-              animate={{
-                scale: [1, 1.5, 1],
-                backgroundColor: ['#e5e7eb', '#3b82f6', '#e5e7eb']
-              }}
-              transition={{
-                duration: 1.5,
-                repeat: Infinity,
-                delay: index * 0.2
-              }}
-              className="w-3 h-3 rounded-full bg-gray-300"
-            />
-          ))}
+
+        <div className="w-full bg-gray-200 rounded-full h-2 mb-4">
+          <motion.div
+            className="bg-gradient-to-r from-blue-500 to-purple-600 h-2 rounded-full"
+            animate={{ width: `${progress}%` }}
+            transition={{ duration: 0.5, ease: "easeInOut" }}
+          />
         </div>
         
-        <div className="mt-6 flex items-center justify-center gap-2 text-sm text-gray-500">
-          <Sparkles className="w-4 h-4" />
-          <span>预计需要 10-15 秒</span>
+        <div className="flex items-center justify-center space-x-2 text-sm text-gray-500">
+          <Clock className="w-4 h-4" />
+          <span>Estimated time: 10-15 seconds</span>
         </div>
       </div>
     </div>

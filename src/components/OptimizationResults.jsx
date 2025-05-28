@@ -35,7 +35,7 @@ const OptimizationResults = ({ results, originalPrompt, strategy, onLoginRequire
           const favorited = await favoritesService.checkIfFavorited(user.id, results.optimizedPrompt)
           setIsFavorited(favorited)
         } catch (error) {
-          console.error('检查收藏状态失败:', error)
+          console.error('Failed to check favorite status:', error)
         }
       }
     }
@@ -60,7 +60,7 @@ const OptimizationResults = ({ results, originalPrompt, strategy, onLoginRequire
         ? originalPrompt.substring(0, 30) + '...' 
         : originalPrompt
     }
-    return '未命名的提示词优化'
+    return 'Untitled Prompt Optimization'
   }
 
   const handleFavoriteClick = async () => {
@@ -70,7 +70,7 @@ const OptimizationResults = ({ results, originalPrompt, strategy, onLoginRequire
     }
 
     if (!favoritesAvailable) {
-      showToast('收藏功能未配置，请配置 Supabase 以启用收藏功能。', 'warning')
+      showToast('Favorites feature not configured. Please configure Supabase to enable favorites.', 'warning')
       return
     }
 
@@ -80,10 +80,10 @@ const OptimizationResults = ({ results, originalPrompt, strategy, onLoginRequire
         setIsAddingToFavorites(true)
         await favoritesService.removeFavoriteByContent(user.id, results.optimizedPrompt)
         setIsFavorited(false)
-        showToast('已取消收藏')
+        showToast('Removed from favorites')
       } catch (error) {
-        console.error('取消收藏失败:', error)
-        showToast(error.message || '取消收藏失败，请重试', 'error')
+        console.error('Failed to remove favorite:', error)
+        showToast(error.message || 'Failed to remove from favorites, please try again', 'error')
       } finally {
         setIsAddingToFavorites(false)
       }
@@ -102,12 +102,12 @@ const OptimizationResults = ({ results, originalPrompt, strategy, onLoginRequire
     }
 
     if (!favoritesAvailable) {
-      showToast('收藏功能未配置，请配置 Supabase 以启用收藏功能。', 'warning')
+      showToast('Favorites feature not configured. Please configure Supabase to enable favorites.', 'warning')
       return
     }
 
     if (!favoriteTitle.trim()) {
-      showToast('请输入收藏标题', 'warning')
+      showToast('Please enter a favorite title', 'warning')
       return
     }
 
@@ -130,28 +130,28 @@ const OptimizationResults = ({ results, originalPrompt, strategy, onLoginRequire
       setFavoriteTitle('')
       
       // 显示成功提示（可以用toast替代）
-      showToast('已成功添加到收藏！')
+      showToast('Successfully added to favorites!')
     } catch (error) {
-      console.error('添加收藏失败:', error)
+      console.error('Failed to add favorite:', error)
       
       // 提供更详细的错误信息
-      if (error.message.includes('Supabase未配置')) {
-        showToast('收藏功能未配置，请配置 Supabase 以启用收藏功能。', 'warning')
-      } else if (error.message.includes('收藏表不存在')) {
-        showToast('收藏表不存在，请查看控制台了解详细设置步骤', 'warning')
+      if (error.message.includes('Supabase not configured')) {
+        showToast('Favorites feature not configured. Please configure Supabase to enable favorites.', 'warning')
+      } else if (error.message.includes('Favorites table does not exist')) {
+        showToast('Favorites table does not exist. Please check console for detailed setup instructions', 'warning')
         
         // 输出详细信息到控制台
-        console.group('📋 收藏表设置说明')
-        console.log('请按以下步骤创建收藏表：')
-        console.log('1. 登录您的 Supabase 控制台：https://app.supabase.com')
-        console.log('2. 选择您的项目')
-        console.log('3. 点击左侧菜单的 "SQL Editor"')
-        console.log('4. 执行项目根目录 SUPABASE_SETUP.md 中的建表SQL')
-        console.log('5. 点击 "Run" 执行 SQL')
-        console.log('6. 刷新页面重试收藏功能')
+        console.group('📋 Favorites Table Setup Instructions')
+        console.log('Please follow these steps to create the favorites table:')
+        console.log('1. Login to your Supabase console: https://app.supabase.com')
+        console.log('2. Select your project')
+        console.log('3. Click "SQL Editor" in the left menu')
+        console.log('4. Execute the table creation SQL from SUPABASE_SETUP.md in the project root')
+        console.log('5. Click "Run" to execute the SQL')
+        console.log('6. Refresh the page and try the favorites feature again')
         console.groupEnd()
       } else {
-        showToast(error.message || '添加收藏失败，请重试', 'error')
+        showToast(error.message || 'Failed to add to favorites, please try again', 'error')
       }
     } finally {
       setIsAddingToFavorites(false)
@@ -170,9 +170,9 @@ const OptimizationResults = ({ results, originalPrompt, strategy, onLoginRequire
   }
 
   const getScoreLabel = (score) => {
-    if (score >= 8) return '优秀'
-    if (score >= 6) return '良好'
-    return '需改进'
+    if (score >= 8) return 'Excellent'
+    if (score >= 6) return 'Good'
+    return 'Needs Improvement'
   }
 
   // Toast 辅助函数
@@ -201,9 +201,9 @@ const OptimizationResults = ({ results, originalPrompt, strategy, onLoginRequire
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
               <Sparkles className="w-5 h-5 text-green-600" />
-              <h3 className="font-medium text-gray-900">优化后的提示词</h3>
+              <h3 className="font-medium text-gray-900">Optimized Prompt</h3>
               <span className="px-2 py-1 bg-green-100 text-green-800 text-xs rounded-full">
-                已优化
+                Optimized
               </span>
             </div>
             
@@ -221,27 +221,27 @@ const OptimizationResults = ({ results, originalPrompt, strategy, onLoginRequire
                 {isAddingToFavorites ? (
                   <>
                     <div className="w-4 h-4 border-2 border-current border-t-transparent rounded-full animate-spin"></div>
-                    处理中...
+                    Processing...
                   </>
                 ) : isFavorited ? (
                   <>
                     <Heart className="w-4 h-4 fill-current" />
-                    已收藏
+                    Favorited
                   </>
                 ) : (
                   <>
                     <Heart className="w-4 h-4" />
-                    收藏
+                    Favorite
                   </>
                 )}
               </button>
             ) : (
               <div 
                 className="flex items-center gap-1 px-3 py-1.5 rounded-lg text-sm font-medium bg-gray-50 text-gray-400 cursor-not-allowed"
-                title="收藏功能未配置，请配置 Supabase 以启用"
+                title="Favorites feature not configured. Please configure Supabase to enable favorites."
               >
                 <Heart className="w-4 h-4" />
-                收藏
+                Favorite
               </div>
             )}
           </div>
@@ -260,13 +260,13 @@ const OptimizationResults = ({ results, originalPrompt, strategy, onLoginRequire
               className="mb-4 p-4 bg-blue-50 rounded-lg border border-blue-200"
             >
               <label className="block text-sm font-medium text-blue-900 mb-2">
-                收藏标题
+                Favorite Title
               </label>
               <input
                 type="text"
                 value={favoriteTitle}
                 onChange={(e) => setFavoriteTitle(e.target.value)}
-                placeholder="为这个优化结果命名..."
+                placeholder="Name this optimization result..."
                 className="w-full px-3 py-2 border border-blue-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm"
                 maxLength={100}
               />
@@ -276,13 +276,13 @@ const OptimizationResults = ({ results, originalPrompt, strategy, onLoginRequire
                   disabled={isAddingToFavorites}
                   className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors text-sm disabled:opacity-50 disabled:cursor-not-allowed"
                 >
-                  {isAddingToFavorites ? '添加中...' : '确认收藏'}
+                  {isAddingToFavorites ? 'Adding...' : 'Confirm Favorite'}
                 </button>
                 <button
                   onClick={handleCancelAddFavorite}
                   className="px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors text-sm"
                 >
-                  取消
+                  Cancel
                 </button>
               </div>
             </motion.div>
@@ -295,12 +295,12 @@ const OptimizationResults = ({ results, originalPrompt, strategy, onLoginRequire
             {copiedIndex === 'main' ? (
               <>
                 <Check className="w-4 h-4" />
-                已复制
+                Copied
               </>
             ) : (
               <>
                 <Copy className="w-4 h-4" />
-                复制提示词
+                Copy Prompt
               </>
             )}
           </button>
@@ -311,7 +311,7 @@ const OptimizationResults = ({ results, originalPrompt, strategy, onLoginRequire
       <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
         <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2">
           <TrendingUp className="w-5 h-5" />
-          分析报告
+          Analysis Report
         </h3>
         
         <div className="grid md:grid-cols-3 gap-4 mb-6">
@@ -319,21 +319,21 @@ const OptimizationResults = ({ results, originalPrompt, strategy, onLoginRequire
             <div className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-medium ${getScoreColor(results.scores.clarity)}`}>
               {results.scores.clarity}/10 {getScoreLabel(results.scores.clarity)}
             </div>
-            <p className="text-sm text-gray-600 mt-1">清晰度</p>
+            <p className="text-sm text-gray-600 mt-1">Clarity</p>
           </div>
           
           <div className="text-center p-4 bg-gray-50 rounded-lg">
             <div className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-medium ${getScoreColor(results.scores.specificity)}`}>
               {results.scores.specificity}/10 {getScoreLabel(results.scores.specificity)}
             </div>
-            <p className="text-sm text-gray-600 mt-1">具体性</p>
+            <p className="text-sm text-gray-600 mt-1">Specificity</p>
           </div>
           
           <div className="text-center p-4 bg-gray-50 rounded-lg">
             <div className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-medium ${getScoreColor(results.scores.effectiveness)}`}>
               {results.scores.effectiveness}/10 {getScoreLabel(results.scores.effectiveness)}
             </div>
-            <p className="text-sm text-gray-600 mt-1">有效性</p>
+            <p className="text-sm text-gray-600 mt-1">Effectiveness</p>
           </div>
         </div>
 
@@ -341,7 +341,7 @@ const OptimizationResults = ({ results, originalPrompt, strategy, onLoginRequire
           <div className="bg-blue-50 rounded-lg p-4">
             <h4 className="font-medium text-blue-900 mb-2 flex items-center gap-2">
               <Lightbulb className="w-4 h-4" />
-              改进说明
+              Improvement Notes
             </h4>
             <p className="text-blue-800 text-sm">{results.analysis.improvements}</p>
           </div>
@@ -350,7 +350,7 @@ const OptimizationResults = ({ results, originalPrompt, strategy, onLoginRequire
             <div className="bg-yellow-50 rounded-lg p-4">
               <h4 className="font-medium text-yellow-900 mb-2 flex items-center gap-2">
                 <AlertCircle className="w-4 h-4" />
-                原提示词问题
+                Original Prompt Issues
               </h4>
               <ul className="text-yellow-800 text-sm space-y-1">
                 {results.analysis.issues.map((issue, index) => (
@@ -368,7 +368,7 @@ const OptimizationResults = ({ results, originalPrompt, strategy, onLoginRequire
       {/* Alternative Suggestions */}
       {results.alternatives && results.alternatives.length > 0 && (
         <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
-          <h3 className="text-lg font-semibold text-gray-900 mb-4">其他建议</h3>
+          <h3 className="text-lg font-semibold text-gray-900 mb-4">Other Suggestions</h3>
           
           <div className="space-y-3">
             {results.alternatives.map((alternative, index) => (

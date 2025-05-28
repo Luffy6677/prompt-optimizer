@@ -36,23 +36,23 @@ const AuthModal = ({ isOpen, onClose }) => {
 
     try {
       if (!email || !password) {
-        throw new Error('请填写所有必填字段')
+        throw new Error('Please fill in all required fields')
       }
 
       if (!isLogin) {
         // 注册逻辑
         if (password !== confirmPassword) {
-          throw new Error('两次输入的密码不一致')
+          throw new Error('The passwords do not match')
         }
         if (password.length < 6) {
-          throw new Error('密码长度至少需要6位')
+          throw new Error('Password length must be at least 6 characters')
         }
 
         const { user } = await signUp(email, password)
         if (user && !user.email_confirmed_at) {
-          setSuccess('注册成功！请检查您的邮箱并确认账户。')
+          setSuccess('Registration successful! Please check your email and confirm your account.')
         } else {
-          setSuccess('注册成功！')
+          setSuccess('Registration successful!')
           setTimeout(() => {
             handleClose()
           }, 1500)
@@ -60,13 +60,13 @@ const AuthModal = ({ isOpen, onClose }) => {
       } else {
         // 登录逻辑
         await signIn(email, password)
-        setSuccess('登录成功！')
+        setSuccess('Login successful!')
         setTimeout(() => {
           handleClose()
         }, 1000)
       }
     } catch (error) {
-      setError(error.message || '操作失败，请重试')
+      setError(error.message || 'Operation failed, please try again')
     } finally {
       setIsLoading(false)
     }
@@ -109,10 +109,10 @@ const AuthModal = ({ isOpen, onClose }) => {
           {/* 标题区域 */}
           <div className="px-8 py-6 bg-gradient-to-r from-blue-500 to-purple-600 text-white">
             <h2 className="text-2xl font-bold mb-2">
-              {isLogin ? '登录账户' : '注册账户'}
+              {isLogin ? 'Login to Account' : 'Create Account'}
             </h2>
             <p className="text-blue-100 text-sm">
-              {isLogin ? '欢迎回来！继续您的提示词优化之旅' : '创建账户，开始您的提示词优化之旅'}
+              {isLogin ? 'Welcome back! Continue your prompt optimization journey' : 'Create an account to start your prompt optimization journey'}
             </p>
           </div>
 
@@ -121,7 +121,7 @@ const AuthModal = ({ isOpen, onClose }) => {
             {/* 邮箱输入 */}
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
-                邮箱地址
+                Email address
               </label>
               <div className="relative">
                 <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={20} />
@@ -130,7 +130,7 @@ const AuthModal = ({ isOpen, onClose }) => {
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
-                  placeholder="输入您的邮箱"
+                  placeholder="Enter your email"
                   required
                 />
               </div>
@@ -139,7 +139,7 @@ const AuthModal = ({ isOpen, onClose }) => {
             {/* 密码输入 */}
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
-                密码
+                Password
               </label>
               <div className="relative">
                 <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={20} />
@@ -148,7 +148,7 @@ const AuthModal = ({ isOpen, onClose }) => {
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
-                  placeholder={isLogin ? "输入您的密码" : "设置密码（至少6位）"}
+                  placeholder={isLogin ? "Enter your password" : "Set password (at least 6 characters)"}
                   required
                 />
               </div>
@@ -158,7 +158,7 @@ const AuthModal = ({ isOpen, onClose }) => {
             {!isLogin && (
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
-                  确认密码
+                  Confirm Password
                 </label>
                 <div className="relative">
                   <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={20} />
@@ -167,7 +167,7 @@ const AuthModal = ({ isOpen, onClose }) => {
                     value={confirmPassword}
                     onChange={(e) => setConfirmPassword(e.target.value)}
                     className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
-                    placeholder="再次输入密码"
+                    placeholder="Enter password again"
                     required
                   />
                 </div>
@@ -207,24 +207,24 @@ const AuthModal = ({ isOpen, onClose }) => {
               {isLoading ? (
                 <div className="flex items-center justify-center space-x-2">
                   <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                  <span>{isLogin ? '登录中...' : '注册中...'}</span>
+                  <span>{isLogin ? 'Logging in...' : 'Creating account...'}</span>
                 </div>
               ) : (
-                isLogin ? '登录' : '注册'
+                isLogin ? 'Login' : 'Create'
               )}
             </button>
 
             {/* 切换登录/注册模式 */}
             <div className="text-center pt-4">
               <span className="text-gray-600 text-sm">
-                {isLogin ? '还没有账户？' : '已有账户？'}
+                {isLogin ? 'Don\'t have an account?' : 'Already have an account?'}
               </span>
               <button
                 type="button"
                 onClick={toggleMode}
                 className="ml-2 text-blue-600 hover:text-blue-700 font-medium text-sm transition-colors"
               >
-                {isLogin ? '立即注册' : '立即登录'}
+                {isLogin ? 'Register now' : 'Login now'}
               </button>
             </div>
           </form>

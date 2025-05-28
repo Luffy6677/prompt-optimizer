@@ -3,10 +3,10 @@ import { supabase } from './supabase'
 // 检查Supabase是否配置
 const checkSupabaseConfig = () => {
   if (!supabase) {
-    console.error('❌ Supabase未配置')
+    console.error('❌ Supabase not configured')
     return {
       isConfigured: false,
-      error: 'Supabase未配置，收藏功能不可用。请配置Supabase以启用收藏功能。'
+      error: 'Supabase not configured. Favorites feature unavailable. Please configure Supabase to enable favorites.'
     }
   }
   return { isConfigured: true }
@@ -38,7 +38,7 @@ export const favoritesService = {
         .single()
       
       if (error) {
-        console.error('❌ 添加收藏失败，Supabase错误:', error)
+        console.error('❌ Failed to add favorite, Supabase error:', error)
         
         // 安全地检查错误类型
         const errorCode = error.code || ''
@@ -54,21 +54,21 @@ export const favoritesService = {
             errorMessage.includes('table') ||
             errorMessage.includes('not found') ||
             (Object.keys(error).length === 0)) { // 空错误对象也可能表示表不存在
-          throw new Error('收藏表不存在。请按照以下步骤创建：\n1. 登录 Supabase 控制台\n2. 进入 SQL Editor\n3. 执行 SUPABASE_SETUP.md 中的建表SQL')
+          throw new Error('Favorites table does not exist. Please follow these steps to create it:\n1. Login to Supabase console\n2. Go to SQL Editor\n3. Execute the table creation SQL from SUPABASE_SETUP.md')
         }
         
-        throw new Error(`添加收藏失败: ${errorMessage || errorCode || `HTTP ${errorStatus}` || '未知错误'}`)
+        throw new Error(`Failed to add favorite: ${errorMessage || errorCode || `HTTP ${errorStatus}` || 'Unknown error'}`)
       }
       
       return data
     } catch (err) {
-      console.error('❌ addFavorite 异常:', err)
+      console.error('❌ addFavorite exception:', err)
       // 如果是我们抛出的错误，直接重新抛出
-      if (err.message.includes('添加收藏失败') || err.message.includes('收藏表不存在')) {
+      if (err.message.includes('Failed to add favorite') || err.message.includes('Favorites table does not exist')) {
         throw err
       }
       // 其他未知异常
-      throw new Error(`添加收藏失败: ${err.message || err.toString()}`)
+      throw new Error(`Failed to add favorite: ${err.message || err.toString()}`)
     }
   },
 
@@ -102,18 +102,18 @@ export const favoritesService = {
             (Object.keys(error).length === 0)) {
           return { 
             data: [], 
-            error: '收藏表不存在。请按照以下步骤创建：\n1. 登录 Supabase 控制台\n2. 进入 SQL Editor\n3. 执行 SUPABASE_SETUP.md 中的建表SQL',
+            error: 'Favorites table does not exist. Please follow these steps to create it:\n1. Login to Supabase console\n2. Go to SQL Editor\n3. Execute the table creation SQL from SUPABASE_SETUP.md',
             isConfigError: true 
           }
         }
-        return { data: [], error: `加载收藏失败: ${errorMessage || errorCode || `HTTP ${errorStatus}` || '未知错误'}`, isConfigError: false }
+        return { data: [], error: `Failed to load favorites: ${errorMessage || errorCode || `HTTP ${errorStatus}` || 'Unknown error'}`, isConfigError: false }
       }
       
       return { data: data || [], error: null, isConfigError: false }
     } catch (err) {
       return { 
         data: [], 
-        error: `加载收藏失败: ${err.message || err.code || '未知错误'}`, 
+        error: `Failed to load favorites: ${err.message || err.code || 'Unknown error'}`, 
         isConfigError: false 
       }
     }
@@ -132,7 +132,7 @@ export const favoritesService = {
       .eq('id', favoriteId)
     
     if (error) {
-      throw new Error(`删除收藏失败: ${error.message || error.code || '未知错误'}`)
+      throw new Error(`Failed to delete favorite: ${error.message || error.code || 'Unknown error'}`)
     }
   },
 
@@ -154,7 +154,7 @@ export const favoritesService = {
       .single()
     
     if (error) {
-      throw new Error(`更新标题失败: ${error.message || error.code || '未知错误'}`)
+      throw new Error(`Failed to update title: ${error.message || error.code || 'Unknown error'}`)
     }
     return data
   },
@@ -201,15 +201,15 @@ export const favoritesService = {
         .eq('optimized_prompt', optimizedPrompt)
       
       if (error) {
-        console.error('❌ 取消收藏失败，Supabase错误:', error)
-        throw new Error(`取消收藏失败: ${error.message || error.code || '未知错误'}`)
+        console.error('❌ Failed to remove favorite, Supabase error:', error)
+        throw new Error(`Failed to remove favorite: ${error.message || error.code || 'Unknown error'}`)
       }
     } catch (err) {
-      console.error('❌ removeFavoriteByContent 异常:', err)
-      if (err.message.includes('取消收藏失败')) {
+      console.error('❌ removeFavoriteByContent exception:', err)
+      if (err.message.includes('Failed to remove favorite')) {
         throw err
       }
-      throw new Error(`取消收藏失败: ${err.message || err.toString()}`)
+      throw new Error(`Failed to remove favorite: ${err.message || err.toString()}`)
     }
   },
 } 

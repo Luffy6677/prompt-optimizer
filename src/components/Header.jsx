@@ -115,10 +115,17 @@ const Header = ({ activeTab = 'home', onTabChange }) => {
                 <DollarSign className="w-4 h-4" />
                 Pricing
               </button>
-              <a href="#documentation" className="flex items-center gap-2 text-gray-600 hover:text-blue-600 transition-colors">
+              <button
+                onClick={() => handleTabClick('documentation')}
+                className={`flex items-center gap-2 transition-colors ${
+                  activeTab === 'documentation' 
+                    ? 'text-blue-600' 
+                    : 'text-gray-600 hover:text-blue-600'
+                }`}
+              >
                 <FileText className="w-4 h-4" />
                 Documentation
-              </a>
+              </button>
               
               <button
                 onClick={() => handleTabClick('favorites')}

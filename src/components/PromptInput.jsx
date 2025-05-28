@@ -32,10 +32,10 @@ const PromptInput = ({ value, onChange, onOptimize, isLoading, onLoginRequired }
   }
 
   const examplePrompts = [
-    "写一篇关于人工智能的文章",
-    "为我的产品创建一个营销方案",
-    "解释量子计算的基本原理",
-    "设计一个用户友好的移动应用界面"
+    "Write an article about artificial intelligence",
+    "Create a marketing plan for my product",
+    "Explain the basic principles of quantum computing",
+    "Design a user-friendly mobile application interface"
   ]
 
   return (
@@ -44,8 +44,8 @@ const PromptInput = ({ value, onChange, onOptimize, isLoading, onLoginRequired }
         <div className="bg-gray-50 px-4 py-3 border-b border-gray-200">
           <div className="flex items-center gap-2">
             <Type className="w-5 h-5 text-gray-600" />
-            <h3 className="font-medium text-gray-900">原始提示词</h3>
-            <span className="text-sm text-gray-500">({value.length} 字符)</span>
+            <h3 className="font-medium text-gray-900">Original Prompt</h3>
+            <span className="text-sm text-gray-500">({value.length} characters)</span>
           </div>
         </div>
         
@@ -55,7 +55,7 @@ const PromptInput = ({ value, onChange, onOptimize, isLoading, onLoginRequired }
             onChange={(e) => isAuthenticated ? onChange(e.target.value) : null}
             onKeyDown={handleKeyDown}
             onClick={handleTextareaClick}
-            placeholder={isAuthenticated ? "请输入您要优化的提示词..." : "请先登录后开始使用"}
+            placeholder={isAuthenticated ? "Enter the prompt you want to optimize..." : "Please log in first to start using"}
             className={`w-full h-40 p-4 border border-gray-300 rounded-lg resize-none transition-all duration-200 ${
               isAuthenticated 
                 ? 'focus:ring-2 focus:ring-blue-500 focus:border-transparent' 
@@ -69,14 +69,14 @@ const PromptInput = ({ value, onChange, onOptimize, isLoading, onLoginRequired }
             <div className="absolute inset-0 flex items-center justify-center bg-gray-50/80 rounded-lg backdrop-blur-sm">
               <div className="text-center">
                 <Lock className="w-8 h-8 text-gray-400 mx-auto mb-2" />
-                <p className="text-gray-600 font-medium">请先登录使用</p>
-                <p className="text-sm text-gray-500">登录后即可开始优化您的提示词</p>
+                <p className="text-gray-600 font-medium">Please log in first</p>
+                <p className="text-sm text-gray-500">Log in to start optimizing your prompts</p>
               </div>
             </div>
           )}
           
           <div className="mt-3 text-sm text-gray-500">
-            <p>💡 提示：{isAuthenticated ? '按 Ctrl/Cmd + Enter 快速开始优化' : '登录后解锁所有功能'}</p>
+            <p>💡 Tip: {isAuthenticated ? 'Press Ctrl/Cmd + Enter to quickly start optimization' : 'Log in to unlock all features'}</p>
           </div>
         </div>
       </div>
@@ -90,7 +90,7 @@ const PromptInput = ({ value, onChange, onOptimize, isLoading, onLoginRequired }
       >
         <h4 className="font-medium text-blue-900 mb-3 flex items-center gap-2">
           <FileText className="w-4 h-4" />
-          示例提示词
+          Example Prompts
         </h4>
         <div className="grid gap-2">
           {examplePrompts.map((prompt, index) => (
@@ -113,7 +113,7 @@ const PromptInput = ({ value, onChange, onOptimize, isLoading, onLoginRequired }
           <div className="mt-3 text-center">
             <p className="text-sm text-gray-600">
               <Lock className="w-4 h-4 inline mr-1" />
-              登录后可使用示例提示词
+              Login and use example prompts
             </p>
           </div>
         )}

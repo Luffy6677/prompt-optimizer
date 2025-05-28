@@ -13,6 +13,7 @@ import FavoritesPage from './components/FavoritesPage'
 import PricingPage from './components/PricingPage'
 import PaymentSuccess from './components/PaymentSuccess'
 import BillingPage from './components/BillingPage'
+import Documentation from './components/Documentation'
 import { AuthProvider, useAuth } from './contexts/AuthContext'
 import { SubscriptionProvider } from './contexts/SubscriptionContext'
 import { optimizePrompt } from './services/api'
@@ -264,6 +265,9 @@ function AppContent() {
           <PricingPage 
             onAuthRequired={handleLoginRequired}
           />
+        )}
+        {activeTab === 'documentation' && (
+          <Documentation />
         )}
         {activeTab === 'billing' && (
           <BillingPage />

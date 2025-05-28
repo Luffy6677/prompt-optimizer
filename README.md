@@ -1,5 +1,7 @@
 # AI 提示词优化器
 
+📖 **NEW: English Documentation Available!** Click the "Documentation" button in the navigation bar to access comprehensive English user guides, tutorials, and feature explanations.
+
 一款基于Deepseek-V3的提示词优化工具，支持付费订阅模式，帮助用户改进和完善他们的AI提示词，提升AI对话的效果和质量。
 
 ## ✨ 特性

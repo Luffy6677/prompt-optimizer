@@ -5,7 +5,7 @@ const OptimizationStrategies = ({ strategies, selectedStrategy, onStrategyChange
   if (compact) {
     return (
       <div className="space-y-3">
-        <h4 className="text-sm font-medium text-gray-700">优化策略</h4>
+        <h4 className="text-sm font-medium text-gray-700">Optimization Strategy</h4>
         <div className="grid grid-cols-2 gap-2">
           {strategies.map((strategy, index) => (
             <motion.button
@@ -39,7 +39,7 @@ const OptimizationStrategies = ({ strategies, selectedStrategy, onStrategyChange
 
   return (
     <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
-      <h3 className="text-lg font-semibold text-gray-900 mb-4">选择优化策略</h3>
+      <h3 className="text-lg font-semibold text-gray-900 mb-4">Choose Optimization Strategy</h3>
       
       <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-4">
         {strategies.map((strategy, index) => (

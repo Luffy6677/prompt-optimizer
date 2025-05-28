@@ -7,26 +7,26 @@ const HowToUse = () => {
     {
       id: 1,
       icon: <Edit3 className="w-8 h-8" />,
-      title: "输入提示词",
-      description: "在左侧输入框中输入您想要优化的原始提示词，可以是任何类型的AI对话提示"
+      title: "Enter Your Prompt",
+      description: "Input your original prompt in the left text box. It can be any type of AI conversation prompt that you want to optimize"
     },
     {
       id: 2,
       icon: <Sparkles className="w-8 h-8" />,
-      title: "开始优化",
-      description: "点击\"开始优化\"按钮，我们的AI将分析并改进您的提示词，使其更加精准有效"
+      title: "Start Optimization",
+      description: "Click the \"Start Optimization\" button, and our AI will analyze and improve your prompt to make it more precise and effective"
     },
     {
       id: 3,
       icon: <Copy className="w-8 h-8" />,
-      title: "获取结果",
-      description: "在右侧查看优化后的提示词，包含详细的改进建议和优化说明"
+      title: "Get Results",
+      description: "View the optimized prompt on the right side, including detailed improvement suggestions and optimization explanations"
     },
     {
       id: 4,
       icon: <CheckCircle className="w-8 h-8" />,
-      title: "应用使用",
-      description: "复制优化后的提示词，在您的AI应用中使用，享受更好的对话效果"
+      title: "Apply & Use",
+      description: "Copy the optimized prompt and use it in your AI applications to enjoy better conversation results"
     }
   ]
 
@@ -41,10 +41,10 @@ const HowToUse = () => {
           className="text-center mb-12"
         >
           <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
-            如何使用
+            How to Use
           </h2>
           <p className="text-xl text-gray-600 max-w-2xl mx-auto">
-            四个简单步骤，让您的AI提示词更加专业和高效
+            Four simple steps to make your AI prompt more professional and efficient
           </p>
         </motion.div>
 
@@ -85,7 +85,7 @@ const HowToUse = () => {
         >
           <div className="inline-flex items-center gap-2 bg-white px-6 py-3 rounded-full shadow-lg">
             <Sparkles className="w-5 h-5 text-blue-600" />
-            <span className="text-gray-700 font-medium">专业提示词优化，让AI更懂你的需求</span>
+            <span className="text-gray-700 font-medium">Professional Prompt Optimization, Let AI Understand Your Needs</span>
           </div>
         </motion.div>
       </div>
