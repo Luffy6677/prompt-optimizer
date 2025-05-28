@@ -11,7 +11,10 @@ import HowToUse from './components/HowToUse'
 import AuthModal from './components/AuthModal'
 import FavoritesPage from './components/FavoritesPage'
 import PricingPage from './components/PricingPage'
+import PaymentSuccess from './components/PaymentSuccess'
+import BillingPage from './components/BillingPage'
 import { AuthProvider, useAuth } from './contexts/AuthContext'
+import { SubscriptionProvider } from './contexts/SubscriptionContext'
 import { optimizePrompt } from './services/api'
 
 function AppContent() {
@@ -25,42 +28,52 @@ function AppContent() {
 
   const { isAuthenticated } = useAuth()
 
+  // Check URL parameters to determine if it's a payment success page
+  useEffect(() => {
+    const urlParams = new URLSearchParams(window.location.search)
+    const sessionId = urlParams.get('session_id')
+    
+    if (sessionId && window.location.pathname.includes('payment-success')) {
+      setActiveTab('payment-success')
+    }
+  }, [])
+
   const strategies = [
     {
       id: 'comprehensive',
-      name: '综合优化',
+      name: 'Comprehensive Optimization',
       icon: <Sparkles className="w-5 h-5" />,
-      description: '全面分析并改进提示词的各个方面'
+      description: 'Comprehensively analyze and improve all aspects of prompts'
     },
     {
       id: 'clarity',
-      name: '清晰度优化',
+      name: 'Clarity Optimization',
       icon: <Lightbulb className="w-5 h-5" />,
-      description: '提高提示词的清晰度和可理解性'
+      description: 'Improve clarity and comprehensibility of prompts'
     },
     {
       id: 'specificity',
-      name: '具体性增强',
+      name: 'Specificity Enhancement',
       icon: <Target className="w-5 h-5" />,
-      description: '增加提示词的具体性和精确性'
+      description: 'Increase specificity and precision of prompts'
     },
     {
       id: 'creativity',
-      name: '创意激发',
+      name: 'Creativity Stimulation',
       icon: <Zap className="w-5 h-5" />,
-      description: '优化提示词以激发更有创意的回答'
+      description: 'Optimize prompts to inspire more creative responses'
     }
   ]
 
   const handleOptimize = async () => {
-    // 检查登录状态
+    // Check login status
     if (!isAuthenticated) {
       setIsAuthModalOpen(true)
       return
     }
 
     if (!originalPrompt.trim()) {
-      setError('请输入要优化的提示词')
+      setError('Please enter a prompt to optimize')
       return
     }
 
@@ -71,7 +84,7 @@ function AppContent() {
       const result = await optimizePrompt(originalPrompt, selectedStrategy)
       setOptimizedResults(result)
     } catch (err) {
-      setError(err.message || '优化过程中出现错误，请稍后重试')
+      setError(err.message || 'An error occurred during optimization, please try again later')
     } finally {
       setIsLoading(false)
     }
@@ -89,9 +102,18 @@ function AppContent() {
 
   const handleTabChange = (tab) => {
     setActiveTab(tab)
+    
+    // Update URL to support direct links
+    if (tab === 'home') {
+      window.history.pushState({}, '', '/')
+    } else if (tab === 'payment-success') {
+      // Keep current URL parameters
+    } else {
+      window.history.pushState({}, '', `/${tab}`)
+    }
   }
 
-  // 渲染主页内容
+  // Render home page content
   const renderHomeContent = () => (
     <>
       {/* Hero Section with Slogan */}
@@ -108,7 +130,7 @@ function AppContent() {
             transition={{ delay: 0.2, duration: 0.6 }}
             className="text-4xl md:text-6xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent mb-6"
           >
-            AI提示词优化器
+            AI Prompt Optimizer
           </motion.h1>
           <motion.p
             initial={{ opacity: 0, y: 20 }}
@@ -116,14 +138,14 @@ function AppContent() {
             transition={{ delay: 0.4, duration: 0.6 }}
             className="text-xl text-gray-600 max-w-3xl mx-auto"
           >
-            利用先进的AI技术，让您的提示词更加精准、清晰、有效
+            Leverage advanced AI technology to make your prompts more precise, clear, and effective
           </motion.p>
         </motion.div>
 
         {/* Core Section - Input and Results */}
         <div className="max-w-6xl mx-auto">
           <div className="grid lg:grid-cols-2 gap-8">
-            {/* Input Section - 强调用户输入 */}
+            {/* Input Section - Emphasize user input */}
             <motion.div
               initial={{ opacity: 0, x: -20 }}
               animate={{ opacity: 1, x: 0 }}
@@ -135,7 +157,7 @@ function AppContent() {
                   <div className="w-8 h-8 bg-blue-100 rounded-lg flex items-center justify-center">
                     <span className="text-blue-600 font-bold">1</span>
                   </div>
-                  输入您的提示词
+                  Enter Your Prompt
                 </h2>
                 
                 <PromptInput
@@ -167,14 +189,14 @@ function AppContent() {
                     ) : (
                       <Send className="w-5 h-5" />
                     )}
-                    {isLoading ? '优化中...' : '开始优化'}
+                    {isLoading ? 'Optimizing...' : 'Start Optimization'}
                   </button>
                   
                   <button
                     onClick={handleClearAll}
                     className="px-6 py-3 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors duration-200"
                   >
-                    清空
+                    Clear
                   </button>
                 </div>
               </div>
@@ -192,7 +214,7 @@ function AppContent() {
                   <div className="w-8 h-8 bg-purple-100 rounded-lg flex items-center justify-center">
                     <span className="text-purple-600 font-bold">2</span>
                   </div>
-                  优化结果
+                  Optimization Results
                 </h2>
                 
                 {isLoading ? (
@@ -208,10 +230,10 @@ function AppContent() {
                   <div className="flex flex-col items-center justify-center h-96 text-center">
                     <Sparkles className="w-16 h-16 text-gray-400 mb-4" />
                     <h3 className="text-lg font-medium text-gray-600 mb-2">
-                      等待优化结果
+                      Waiting for Optimization Results
                     </h3>
                     <p className="text-gray-500">
-                      {isAuthenticated ? '输入您的提示词并点击"开始优化"按钮' : '请先登录后开始使用'}
+                      {isAuthenticated ? 'Enter your prompt and click "Start Optimization" button' : 'Please login first to start using'}
                     </p>
                   </div>
                 )}
@@ -243,11 +265,17 @@ function AppContent() {
             onAuthRequired={handleLoginRequired}
           />
         )}
+        {activeTab === 'billing' && (
+          <BillingPage />
+        )}
+        {activeTab === 'payment-success' && (
+          <PaymentSuccess />
+        )}
       </main>
 
       <Footer />
 
-      {/* 登录弹窗 */}
+      {/* Login Modal */}
       <AuthModal
         isOpen={isAuthModalOpen}
         onClose={() => setIsAuthModalOpen(false)}
@@ -256,11 +284,13 @@ function AppContent() {
   )
 }
 
-// 主App组件，包装AuthProvider
+// Main App component, wrapping AuthProvider and SubscriptionProvider
 function App() {
   return (
     <AuthProvider>
-      <AppContent />
+      <SubscriptionProvider>
+        <AppContent />
+      </SubscriptionProvider>
     </AuthProvider>
   )
 }

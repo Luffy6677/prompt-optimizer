@@ -13,70 +13,124 @@ import {
   Target
 } from 'lucide-react'
 import { useAuth } from '../contexts/AuthContext'
+import { useSubscription } from '../contexts/SubscriptionContext'
+import { createAndRedirectToCheckout, createCustomerPortalSession } from '../services/stripe'
+import Toast from './Toast'
 
 const PricingPage = ({ onAuthRequired }) => {
   const [billingPeriod, setBillingPeriod] = useState('monthly')
-  const { isAuthenticated } = useAuth()
+  const [loading, setLoading] = useState(null)
+  const [toast, setToast] = useState(null)
+  const { isAuthenticated, user } = useAuth()
+  const { subscription, isSubscriptionActive } = useSubscription()
+
+  // Stripe Price ID Configuration
+  // Note: Use price IDs (price_xxx), not product IDs (prod_xxx)
+  // In Stripe Dashboard -> Products -> Select Product -> Copy Price ID
+  const PRICE_IDS = {
+    personal: {
+      // These are example price IDs for Stripe test environment, replace with your actual price IDs
+      monthly: 'price_1RTGzFP1MsuVjL1H9FCVdz3C', // $1.99/month
+      yearly: 'price_1RTGzqP1MsuVjL1HXuMWpJsP'   // $19.99/year
+    },
+    professional: {
+      monthly: 'price_1RTH0vP1MsuVjL1HfoJp8ueE', // $9.99/month  
+      yearly: 'price_1RTH1MP1MsuVjL1HdMK2LLqm'   // $99.99/year
+    }
+  }
 
   const plans = [
     {
       id: 'personal',
-      name: '个人版',
-      description: '适合个人用户和偶尔使用的场景',
+      name: 'Personal',
+      description: 'Perfect for individuals and occasional use',
       price: {
-        monthly: 1.99,
-        yearly: 19.99
+        monthly: 0.1,
+        yearly: 0.2
       },
       features: [
-        '每月 10 次 prompt 优化',
-        '4 种优化策略选择',
-        '基础结果分析',
-        '结果收藏功能',
-        '标准客服支持',
-        '优化历史记录'
+        '10 prompt optimizations per month',
+        '4 optimization strategies',
+        'Basic result analysis',
+        'Favorites functionality',
+        'Standard customer support',
+        'Optimization history'
       ],
       icon: <Users className="w-6 h-6" />,
       color: 'from-blue-500 to-cyan-500',
       popular: false,
-      usageLimit: '10 次/月',
-      support: '标准支持'
+      usageLimit: '10/month',
+      support: 'Standard Support'
     },
     {
       id: 'professional',
-      name: '专业版',
-      description: '适合专业用户和频繁使用的场景',
+      name: 'Professional',
+      description: 'Ideal for professionals and frequent users',
       price: {
-        monthly: 9.99,
-        yearly: 99.99
+        monthly: 0.15,
+        yearly: 0.3
       },
       features: [
-        '每月 100 次 prompt 优化',
-        '全部优化策略',
-        '高级结果分析',
-        '无限收藏和分类',
-        '优先客服支持',
-        '详细使用统计',
-        '批量优化功能',
-        '自定义优化模板',
-        'API 访问权限'
+        '100 prompt optimizations per month',
+        'All optimization strategies',
+        'Advanced result analysis',
+        'Unlimited favorites & categories',
+        'Priority customer support',
+        'Detailed usage analytics',
+        'Batch optimization',
+        'Custom optimization templates',
+        'API access'
       ],
       icon: <Crown className="w-6 h-6" />,
       color: 'from-purple-500 to-pink-500',
       popular: true,
-      usageLimit: '100 次/月',
-      support: '优先支持'
+      usageLimit: '100/month',
+      support: 'Priority Support'
     }
   ]
 
-  const handleSubscribe = (planId) => {
+  const handleSubscribe = async (planId) => {
     if (!isAuthenticated) {
       onAuthRequired?.()
       return
     }
-    
-    // TODO: 集成支付系统
-    console.log(`Subscribe to ${planId}`)
-    alert(`即将跳转到 ${planId === 'personal' ? '个人版' : '专业版'} 支付页面`)
+
+    // If user already has an active subscription, redirect to billing page
+    if (isSubscriptionActive()) {
+      try {
+        setLoading(planId)
+        // Redirect to subscription management page
+        window.location.href = '/billing'
+      } catch (error) {
+        console.error('Error navigating to billing page:', error)
+      } finally {
+        setLoading(null)
+      }
+      return
+    }
+
+    try {
+      setLoading(planId)
+      
+      // Get corresponding price ID
+      const priceId = PRICE_IDS[planId][billingPeriod]
+      
+      if (!priceId) {
+        throw new Error('Invalid plan or billing period')
+      }
+
+      // Create Stripe Checkout session and redirect
+      await createAndRedirectToCheckout(priceId, user.id)
+      
+    } catch (error) {
+      console.error('Error creating checkout session:', error)
+      setToast({
+        type: 'error',
+        message: 'Payment initialization failed, please try again'
+      })
+    } finally {
+      setLoading(null)
+    }
   }
 
   const getPrice = (plan) => {
@@ -89,6 +143,18 @@ const PricingPage = ({ onAuthRequired }) => {
     const savings = monthlyTotal - yearlyPrice
     const percentage = Math.round((savings / monthlyTotal) * 100)
     return { amount: savings, percentage }
+  }
+
+  const getButtonText = (planId) => {
+    if (!isAuthenticated) {
+      return 'Login to Subscribe'
+    }
+    
+    if (isSubscriptionActive()) {
+      return 'Manage Subscription'
+    }
+    
+    return loading === planId ? 'Processing...' : 'Subscribe Now'
   }
 
   return (
@@ -108,20 +174,20 @@ const PricingPage = ({ onAuthRequired }) => {
             className="inline-flex items-center gap-2 px-4 py-2 bg-blue-100 text-blue-700 rounded-full text-sm font-medium mb-6"
           >
             <Sparkles className="w-4 h-4" />
-            简单透明的定价
+            Simple & Transparent Pricing
           </motion.div>
           
           <h1 className="text-5xl md:text-6xl font-bold text-gray-900 mb-6">
-            选择适合您的
+            Choose Your Perfect
             <span className="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
-              优化方案
+              {" "}Optimization Plan
             </span>
           </h1>
           
           <p className="text-xl text-gray-600 max-w-3xl mx-auto mb-8">
-            无论您是个人用户还是专业工作者，我们都有适合您的AI提示词优化方案。
+            Whether you're an individual user or a professional worker, we have the perfect AI prompt optimization plan for you.
             <br />
-            让每一次AI对话都更加精准有效。
+            Make every AI conversation more precise and effective.
           </p>
 
           {/* Billing Toggle */}
@@ -139,7 +205,7 @@ const PricingPage = ({ onAuthRequired }) => {
                   : 'text-gray-600 hover:text-gray-900'
               }`}
             >
-              月付
+              Monthly
             </button>
             <button
               onClick={() => setBillingPeriod('yearly')}
@@ -149,9 +215,9 @@ const PricingPage = ({ onAuthRequired }) => {
                   : 'text-gray-600 hover:text-gray-900'
               }`}
             >
-              年付
+              Yearly
               <span className="ml-2 text-xs bg-green-100 text-green-700 px-2 py-1 rounded-full">
-                省 17%
+                Save 17%
               </span>
             </button>
           </motion.div>
@@ -179,7 +245,7 @@ const PricingPage = ({ onAuthRequired }) => {
                   {plan.popular && (
                     <div className="absolute top-0 right-0 bg-gradient-to-r from-purple-500 to-pink-500 text-white px-4 py-1 text-sm font-medium">
                       <Star className="w-4 h-4 inline mr-1" />
-                      最受欢迎
+                      Most Popular
                     </div>
                   )}
 
@@ -202,13 +268,13 @@ const PricingPage = ({ onAuthRequired }) => {
                           ${getPrice(plan)}
                         </span>
                         <span className="text-gray-600">
-                          /{billingPeriod === 'monthly' ? '月' : '年'}
+                          /{billingPeriod === 'monthly' ? 'month' : 'year'}
                         </span>
                       </div>
                       
                       {billingPeriod === 'yearly' && (
                         <div className="mt-2 text-sm text-green-600">
-                          每年节省 ${savings.amount.toFixed(2)} ({savings.percentage}% off)
+                          Save ${savings.amount.toFixed(2)} annually ({savings.percentage}% off)
                         </div>
                       )}
                     </div>
@@ -217,11 +283,11 @@ const PricingPage = ({ onAuthRequired }) => {
                     <div className="grid grid-cols-2 gap-4 mb-6 p-4 bg-gray-50 rounded-lg">
                       <div className="text-center">
                         <div className="text-2xl font-bold text-gray-900">{plan.usageLimit}</div>
-                        <div className="text-sm text-gray-600">优化次数</div>
+                        <div className="text-sm text-gray-600">Optimizations</div>
                       </div>
                       <div className="text-center">
                         <div className="text-2xl font-bold text-gray-900">{plan.support}</div>
-                        <div className="text-sm text-gray-600">客服支持</div>
+                        <div className="text-sm text-gray-600">Customer Support</div>
                       </div>
                     </div>
 
@@ -243,22 +309,27 @@ const PricingPage = ({ onAuthRequired }) => {
 
                     {/* CTA Button */}
                     <motion.button
-                      whileHover={{ scale: 1.02 }}
-                      whileTap={{ scale: 0.98 }}
+                      whileHover={{ scale: loading === plan.id ? 1 : 1.02 }}
+                      whileTap={{ scale: loading === plan.id ? 1 : 0.98 }}
                       onClick={() => handleSubscribe(plan.id)}
+                      disabled={loading === plan.id}
                       className={`w-full py-4 px-6 rounded-lg font-semibold transition-all duration-200 flex items-center justify-center gap-2 ${
                         plan.popular
                           ? 'bg-gradient-to-r from-purple-600 to-pink-600 text-white hover:from-purple-700 hover:to-pink-700 shadow-lg hover:shadow-xl'
                           : 'bg-gray-900 text-white hover:bg-gray-800'
-                      }`}
+                      } ${loading === plan.id ? 'opacity-75 cursor-not-allowed' : ''}`}
                     >
-                      {isAuthenticated ? '立即订阅' : '登录后订阅'}
-                      <ArrowRight className="w-5 h-5" />
+                      {getButtonText(plan.id)}
+                      {loading === plan.id ? (
+                        <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>
+                      ) : (
+                        <ArrowRight className="w-5 h-5" />
+                      )}
                     </motion.button>
 
                     {!isAuthenticated && (
                       <p className="text-center text-sm text-gray-500 mt-3">
-                        需要先登录才能订阅
+                        Please login first to subscribe
                       </p>
                     )}
                   </div>
@@ -277,10 +348,10 @@ const PricingPage = ({ onAuthRequired }) => {
         >
           <div className="text-center mb-12">
             <h2 className="text-3xl font-bold text-gray-900 mb-4">
-              为什么选择我们的优化服务？
+              Why Choose Our Optimization Service?
             </h2>
             <p className="text-lg text-gray-600">
-              专业的AI技术，帮助您获得更好的AI对话体验
+              Professional AI technology to help you achieve better AI conversation experiences
             </p>
           </div>
 
@@ -289,9 +360,9 @@ const PricingPage = ({ onAuthRequired }) => {
               <div className="w-16 h-16 bg-blue-100 rounded-2xl flex items-center justify-center mx-auto mb-4">
                 <Zap className="w-8 h-8 text-blue-600" />
               </div>
-              <h3 className="text-xl font-semibold text-gray-900 mb-2">快速优化</h3>
+              <h3 className="text-xl font-semibold text-gray-900 mb-2">Fast Optimization</h3>
               <p className="text-gray-600">
-                采用最新的AI技术，几秒内完成提示词优化，提升您的工作效率
+                Using the latest AI technology, complete prompt optimization in seconds and boost your productivity
               </p>
             </div>
 
@@ -299,9 +370,9 @@ const PricingPage = ({ onAuthRequired }) => {
               <div className="w-16 h-16 bg-purple-100 rounded-2xl flex items-center justify-center mx-auto mb-4">
                 <Target className="w-8 h-8 text-purple-600" />
               </div>
-              <h3 className="text-xl font-semibold text-gray-900 mb-2">精准优化</h3>
+              <h3 className="text-xl font-semibold text-gray-900 mb-2">Precise Optimization</h3>
               <p className="text-gray-600">
-                多种优化策略，针对不同场景提供最适合的提示词改进方案
+                Multiple optimization strategies, providing the most suitable prompt improvement solutions for different scenarios
               </p>
             </div>
 
@@ -309,9 +380,9 @@ const PricingPage = ({ onAuthRequired }) => {
               <div className="w-16 h-16 bg-green-100 rounded-2xl flex items-center justify-center mx-auto mb-4">
                 <Shield className="w-8 h-8 text-green-600" />
               </div>
-              <h3 className="text-xl font-semibold text-gray-900 mb-2">安全可靠</h3>
+              <h3 className="text-xl font-semibold text-gray-900 mb-2">Secure & Reliable</h3>
               <p className="text-gray-600">
-                您的数据安全加密存储，我们承诺不会用于训练或其他用途
+                Your data is securely encrypted and stored. We promise not to use it for training or other purposes
               </p>
             </div>
           </div>
@@ -326,35 +397,35 @@ const PricingPage = ({ onAuthRequired }) => {
         >
           <div className="text-center mb-12">
             <h2 className="text-3xl font-bold text-gray-900 mb-4">
-              常见问题
+              Frequently Asked Questions
             </h2>
           </div>
 
           <div className="space-y-6">
             <div className="bg-white rounded-lg p-6 shadow-sm border border-gray-200">
               <h3 className="text-lg font-semibold text-gray-900 mb-2">
-                如果当月用完了优化次数怎么办？
+                What happens if I use up my monthly optimizations?
               </h3>
               <p className="text-gray-600">
-                您可以升级到更高的套餐，或者等待下个月的次数重置。我们也会在即将用完时提醒您。
+                You can upgrade to a higher plan, or wait for the next month's quota to reset. We'll also remind you when you're about to run out.
               </p>
             </div>
 
             <div className="bg-white rounded-lg p-6 shadow-sm border border-gray-200">
               <h3 className="text-lg font-semibold text-gray-900 mb-2">
-                可以随时取消订阅吗？
+                Can I cancel my subscription at any time?
               </h3>
               <p className="text-gray-600">
-                是的，您可以随时取消订阅。取消后，您可以继续使用到当前计费周期结束。
+                Yes, you can cancel your subscription at any time. After cancellation, you can continue to use the service until the end of your current billing cycle.
               </p>
             </div>
 
             <div className="bg-white rounded-lg p-6 shadow-sm border border-gray-200">
               <h3 className="text-lg font-semibold text-gray-900 mb-2">
-                支持哪些支付方式？
+                What payment methods do you support?
               </h3>
               <p className="text-gray-600">
-                我们支持信用卡、借记卡和 PayPal 支付。所有支付都通过安全的第三方平台处理。
+                We support credit cards, debit cards, and PayPal. All payments are processed through secure third-party platforms.
               </p>
             </div>
           </div>
@@ -369,10 +440,10 @@ const PricingPage = ({ onAuthRequired }) => {
         >
           <div className="bg-gradient-to-r from-blue-600 to-purple-600 rounded-2xl p-8 text-white">
             <h2 className="text-3xl font-bold mb-4">
-              准备好提升您的AI对话质量了吗？
+              Ready to Enhance Your AI Conversation Quality?
             </h2>
             <p className="text-xl mb-6 opacity-90">
-              立即开始使用专业的提示词优化服务
+              Start using professional prompt optimization services today
             </p>
             <motion.button
               whileHover={{ scale: 1.05 }}
@@ -380,12 +451,22 @@ const PricingPage = ({ onAuthRequired }) => {
               onClick={() => !isAuthenticated ? onAuthRequired?.() : handleSubscribe('professional')}
               className="bg-white text-blue-600 px-8 py-3 rounded-lg font-semibold hover:bg-gray-50 transition-colors inline-flex items-center gap-2"
             >
-              {isAuthenticated ? '开始使用' : '立即注册'}
+              {isAuthenticated ? 'Get Started' : 'Sign Up Now'}
               <ArrowRight className="w-5 h-5" />
             </motion.button>
           </div>
         </motion.div>
       </div>
+
+      {/* Toast Notification */}
+      {toast && (
+        <Toast
+          message={toast.message}
+          type={toast.type}
+          isVisible={!!toast}
+          onClose={() => setToast(null)}
+        />
+      )}
     </div>
   )
 }

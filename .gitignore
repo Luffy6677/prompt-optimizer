@@ -96,3 +96,4 @@ server/logs/
 
 # Netlify
 netlify/ 
+.vercel

@@ -1,19 +1,23 @@
 # AI 提示词优化器
 
-一款基于Deepseek-V3的提示词优化工具，帮助用户改进和完善他们的AI提示词，提升AI对话的效果和质量。
+一款基于Deepseek-V3的提示词优化工具，支持付费订阅模式，帮助用户改进和完善他们的AI提示词，提升AI对话的效果和质量。
 
 ## ✨ 特性
 
 - 🧠 **Deepseek-V3驱动** - 使用先进的Deepseek-V3模型分析和改进提示词
 - 🔐 **用户认证系统** - 基于Supabase的安全登录注册功能
+- 💳 **付费订阅模式** - 集成Stripe支付，支持个人版和专业版订阅
+- 📊 **使用次数管理** - 根据订阅计划管理用户的优化次数
 - ❤️ **收藏管理** - 收藏您满意的优化结果，随时查看和管理
 - 🎯 **多种优化策略** - 提供综合优化、清晰度优化、具体性增强、创意激发等多种策略
 - 🧮 **强化推理能力** - 利用Deepseek-V3的强大推理能力进行深度优化
 - 📊 **详细分析报告** - 提供清晰度、具体性、有效性等维度的评分和分析
+- 💰 **客户门户** - 集成Stripe客户门户，用户可自助管理订阅和发票
 - 🎨 **现代化界面** - 美观易用的React前端界面
 - ⚡ **实时优化** - 快速响应，即时获得优化结果
 - 📝 **多样化建议** - 提供多种替代优化方案
 - 📱 **响应式设计** - 支持桌面端和移动端
+- 🔒 **安全支付** - 使用Stripe确保支付安全，支持多种支付方式
 
 ## 🚀 快速开始
 
@@ -22,7 +26,8 @@
 - Node.js 16.x 或更高版本
 - npm 或 yarn
 - Deepseek API Key (用于AI功能)
-- Supabase项目 (用于用户认证，可选)
+- Supabase项目 (用于用户认证)
+- Stripe账户 (用于支付功能)
 
 ### 安装步骤
 
@@ -45,16 +50,25 @@
    编辑 `.env` 文件，添加必要的配置：
    ```
    PORT=3001
+   
+   # AI功能配置
    DEEPSEEK_API_KEY=your_deepseek_api_key_here          # 必需，用于AI功能
-   VITE_SUPABASE_URL=your_supabase_project_url          # 可选，用于用户认证
-   VITE_SUPABASE_ANON_KEY=your_supabase_anon_key        # 可选，用于用户认证
+   
+   # 用户认证配置
+   VITE_SUPABASE_URL=your_supabase_project_url          # 必需，用于用户认证
+   VITE_SUPABASE_ANON_KEY=your_supabase_anon_key        # 必需，用于用户认证
+   
+   # 支付功能配置
+   VITE_STRIPE_PUBLISHABLE_KEY=pk_test_your_key         # 必需，Stripe可发布密钥
+   STRIPE_SECRET_KEY=sk_test_your_key                   # 必需，Stripe密钥
+   STRIPE_WEBHOOK_SECRET=whsec_your_webhook_secret      # 必需，Webhook验证
    ```
-   
-   **注意**：如果不配置Supabase，应用仍可运行，但用户认证功能将被禁用。
 
-4. **配置Supabase（可选）**
+4. **配置外部服务**
    
-   如需启用用户认证功能，请参考 [Supabase配置指南](./SUPABASE_SETUP.md) 进行详细配置。
+   - **Deepseek API**: 参考 [Deepseek配置指南](./DEEPSEEK_SETUP.md)
+   - **Supabase**: 参考 [Supabase配置指南](./SUPABASE_SETUP.md)
+   - **Stripe支付**: 参考 [Stripe配置指南](./STRIPE_SETUP.md)
 
 5. **启动后端服务**
    ```bash
@@ -70,32 +84,65 @@
    
    打开浏览器访问 `http://localhost:3000`
 
+## 💳 订阅计划
+
+### 个人版 - $1.99/月 或 $19.99/年
+- 每月 10 次 prompt 优化
+- 4 种优化策略选择
+- 基础结果分析
+- 结果收藏功能
+- 标准客服支持
+- 优化历史记录
+
+### 专业版 - $9.99/月 或 $99.99/年 ⭐ 推荐
+- 每月 100 次 prompt 优化
+- 全部优化策略
+- 高级结果分析
+- 无限收藏和分类
+- 优先客服支持
+- 详细使用统计
+- 批量优化功能
+- 自定义优化模板
+- API 访问权限
+
 ## 🎯 使用指南
 
-### 用户认证（可选功能）
-
-如果配置了Supabase，应用将提供用户认证功能：
+### 用户注册和订阅
 
 1. **注册账户** - 点击"Login"按钮，选择"立即注册"
-2. **邮箱验证** - 根据Supabase配置，可能需要验证邮箱
-3. **登录使用** - 使用注册的邮箱和密码登录
-4. **退出登录** - 点击用户头像，选择"退出登录"
+2. **邮箱验证** - 验证邮箱地址（如需要）
+3. **选择订阅计划** - 在定价页面选择适合的订阅计划
+4. **完成支付** - 通过Stripe安全支付，支持信用卡和PayPal
+5. **开始使用** - 支付成功后即可开始使用优化服务
 
-**注意**：如果未配置Supabase，应用将自动禁用认证功能，所有用户都可以直接使用优化功能。
+### 订阅管理
+
+- **查看订阅状态** - 在定价页面查看当前订阅信息
+- **管理订阅** - 点击"管理订阅"进入Stripe客户门户
+- **更改计划** - 在客户门户中升级或降级订阅计划
+- **取消订阅** - 可随时取消，订阅期结束前仍可使用服务
+- **下载发票** - 在客户门户中下载支付发票
 
 ### 基本使用流程
 
-1. **登录账户** - 如果启用了认证功能，需要先登录（未启用则跳过此步骤）
-2. **输入原始提示词** - 在左侧文本框输入您要优化的提示词
-3. **选择优化策略** - 根据需求选择合适的优化策略：
+1. **登录账户** - 使用注册的邮箱和密码登录
+2. **检查订阅状态** - 确保有活跃的订阅计划
+3. **输入原始提示词** - 在左侧文本框输入您要优化的提示词
+4. **选择优化策略** - 根据需求选择合适的优化策略：
    - **综合优化**：全面改进提示词的各个方面，利用Deepseek-V3的推理能力
    - **清晰度优化**：提高提示词的清晰度和可理解性
    - **具体性增强**：增加提示词的具体性和精确性
    - **创意激发**：优化提示词以激发更有创意的回答
-4. **开始优化** - 点击"开始优化"按钮或使用快捷键 Ctrl/Cmd + Enter
-5. **查看结果** - 在右侧查看优化后的提示词和详细分析报告
-6. **收藏优化结果** - 点击收藏按钮将满意的优化结果保存到个人收藏
-7. **复制使用** - 点击复制按钮将优化后的提示词复制到剪贴板
+5. **开始优化** - 点击"开始优化"按钮或使用快捷键 Ctrl/Cmd + Enter
+6. **查看结果** - 在右侧查看优化后的提示词和详细分析报告
+7. **收藏优化结果** - 点击收藏按钮将满意的优化结果保存到个人收藏
+8. **复制使用** - 点击复制按钮将优化后的提示词复制到剪贴板
+
+### 使用次数管理
+
+- **查看剩余次数** - 在界面中实时显示本月剩余优化次数
+- **次数用完处理** - 当月次数用完时，可升级订阅计划或等待下月重置
+- **升级提醒** - 系统会在接近使用限制时提醒用户考虑升级
 
 ### 收藏管理功能
 
@@ -154,11 +201,13 @@
 - **Lucide React** - 图标库
 - **Axios** - HTTP客户端
 - **Supabase** - 用户认证和数据库服务
+- **Stripe** - 支付处理
 
 ### 后端技术栈
 - **Node.js** - 运行时环境
 - **Express** - Web框架
 - **Deepseek API** - AI服务 (Deepseek-V3)
+- **Stripe** - 支付和订阅管理
 - **CORS** - 跨域支持
 
 ### AI模型
@@ -166,16 +215,24 @@
 - **deepseek-chat** - 对话优化模型
 - **API兼容** - 兼容OpenAI SDK接口
 
+### 支付功能
+- **Stripe Checkout** - 安全的支付流程
+- **Subscription Management** - 订阅生命周期管理
+- **Customer Portal** - 自助服务门户
+- **Webhook Integration** - 实时事件处理
+
 ### 项目结构
 ```
 prompt-optimizer/
 ├── src/                    # 前端源码
 │   ├── components/         # React组件
 │   ├── services/          # API服务
+│   ├── contexts/          # React Context
 │   └── ...
 ├── server/                # 后端源码
 │   └── index.js          # 服务器入口
 ├── public/               # 静态资源
+├── STRIPE_SETUP.md       # Stripe配置指南
 └── ...
 ```
 
@@ -192,6 +249,44 @@ Content-Type: application/json
 }
 ```
 
+### 支付相关接口
+
+#### 创建支付会话
+```http
+POST /api/create-checkout-session
+Content-Type: application/json
+
+{
+  "priceId": "price_xxxxx",
+  "userId": "user_id",
+  "successUrl": "https://domain.com/payment-success",
+  "cancelUrl": "https://domain.com/pricing"
+}
+```
+
+#### 获取订阅信息
+```http
+GET /api/subscription/:userId
+```
+
+#### 创建客户门户会话
+```http
+POST /api/create-portal-session
+Content-Type: application/json
+
+{
+  "customerId": "cus_xxxxx",
+  "returnUrl": "https://domain.com/pricing"
+}
+```
+
+#### Webhook处理
+```http
+POST /api/webhook
+Content-Type: application/json
+Stripe-Signature: t=timestamp,v1=signature
+```
+
 ### 获取优化策略列表
 ```http
 GET /api/strategies
@@ -199,7 +294,7 @@ GET /api/strategies
 
 ### 健康检查
 ```http
-GET /api/health
+GET /health
 ```
 
 ## 🎨 界面预览
