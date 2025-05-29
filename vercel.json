@@ -4,6 +4,7 @@
   "framework": "vite",
   "installCommand": "npm install",
   "devCommand": "npm run dev",
+  "cleanUrls": true,
   "functions": {
     "api/webhook.js": {
       "maxDuration": 10
@@ -38,6 +39,10 @@
         {
           "key": "Permissions-Policy",
           "value": "camera=(), microphone=(), geolocation=()"
+        },
+        {
+          "key": "X-Build-Time",
+          "value": "2024-12-24T20:00:00Z"
         }
       ]
     },
@@ -47,6 +52,15 @@
         {
           "key": "Cache-Control",
           "value": "public, max-age=31536000, immutable"
+        }
+      ]
+    },
+    {
+      "source": "/(.*\\.(js|css|html))",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=0, must-revalidate"
         }
       ]
     }
