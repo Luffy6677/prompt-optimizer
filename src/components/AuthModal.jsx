@@ -1,7 +1,8 @@
 import React, { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { X, Mail, Lock, User, AlertCircle, CheckCircle } from 'lucide-react'
+import { X, Mail, Lock, User, AlertCircle, CheckCircle, RefreshCw } from 'lucide-react'
 import { useAuth } from '../contexts/AuthContext'
+import { auth } from '../services/supabase'
 
 const AuthModal = ({ isOpen, onClose }) => {
   const [isLogin, setIsLogin] = useState(true)
@@ -11,6 +12,8 @@ const AuthModal = ({ isOpen, onClose }) => {
   const [error, setError] = useState('')
   const [success, setSuccess] = useState('')
   const [isLoading, setIsLoading] = useState(false)
+  const [isResending, setIsResending] = useState(false)
+  const [showResendButton, setShowResendButton] = useState(false)
 
   const { signIn, signUp } = useAuth()
 
@@ -21,6 +24,8 @@ const AuthModal = ({ isOpen, onClose }) => {
     setError('')
     setSuccess('')
     setIsLoading(false)
+    setIsResending(false)
+    setShowResendButton(false)
   }
 
   const handleClose = () => {
@@ -28,11 +33,32 @@ const AuthModal = ({ isOpen, onClose }) => {
     onClose()
   }
 
+  const handleResendVerification = async () => {
+    if (!email) {
+      setError('Please enter your email address first')
+      return
+    }
+
+    setIsResending(true)
+    setError('')
+    
+    try {
+      await auth.resendEmailVerification(email)
+      setSuccess('Verification email sent! Please check your inbox and spam folder.')
+      setShowResendButton(false)
+    } catch (error) {
+      setError(error.message || 'Failed to resend verification email')
+    } finally {
+      setIsResending(false)
+    }
+  }
+
   const handleSubmit = async (e) => {
     e.preventDefault()
     setError('')
     setSuccess('')
     setIsLoading(true)
+    setShowResendButton(false)
 
     try {
       if (!email || !password) {
@@ -40,7 +66,7 @@ const AuthModal = ({ isOpen, onClose }) => {
       }
 
       if (!isLogin) {
-        // 注册逻辑
+        // Registration logic
         if (password !== confirmPassword) {
           throw new Error('The passwords do not match')
         }
@@ -51,6 +77,7 @@ const AuthModal = ({ isOpen, onClose }) => {
         const { user } = await signUp(email, password)
         if (user && !user.email_confirmed_at) {
           setSuccess('Registration successful! Please check your email and confirm your account.')
+          setShowResendButton(true)
         } else {
           setSuccess('Registration successful!')
           setTimeout(() => {
@@ -58,7 +85,7 @@ const AuthModal = ({ isOpen, onClose }) => {
           }, 1500)
         }
       } else {
-        // 登录逻辑
+        // Login logic
         await signIn(email, password)
         setSuccess('Login successful!')
         setTimeout(() => {
@@ -67,6 +94,11 @@ const AuthModal = ({ isOpen, onClose }) => {
       }
     } catch (error) {
       setError(error.message || 'Operation failed, please try again')
+      
+      // Show resend button for certain email verification errors
+      if (error.message.includes('email') && error.message.includes('confirm')) {
+        setShowResendButton(true)
+      }
     } finally {
       setIsLoading(false)
     }
@@ -227,6 +259,20 @@ const AuthModal = ({ isOpen, onClose }) => {
                 {isLogin ? 'Register now' : 'Login now'}
               </button>
             </div>
+
+            {/* 重新发送验证邮件按钮 */}
+            {showResendButton && (
+              <div className="text-center pt-4">
+                <button
+                  type="button"
+                  onClick={handleResendVerification}
+                  disabled={isResending}
+                  className="text-blue-600 hover:text-blue-700 font-medium text-sm transition-colors"
+                >
+                  {isResending ? 'Resending...' : 'Resend verification email'}
+                </button>
+              </div>
+            )}
           </form>
         </motion.div>
       </div>

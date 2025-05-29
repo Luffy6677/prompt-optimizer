@@ -7,8 +7,17 @@ if (!supabaseUrl || !supabaseAnonKey) {
   console.warn('Supabase environment variables not found. Authentication features will be disabled.')
 }
 
+// Supabase client configuration with auth settings
 export const supabase = supabaseUrl && supabaseAnonKey ? 
-  createClient(supabaseUrl, supabaseAnonKey) : null
+  createClient(supabaseUrl, supabaseAnonKey, {
+    auth: {
+      // Configure authentication settings
+      autoRefreshToken: true,
+      persistSession: true,
+      detectSessionInUrl: true,
+      flowType: 'pkce'
+    }
+  }) : null
 
 // Auth helper functions
 export const auth = {
@@ -19,6 +28,10 @@ export const auth = {
     const { data, error } = await supabase.auth.signUp({
       email,
       password,
+      options: {
+        // Configure email redirect URL for verification
+        emailRedirectTo: `${window.location.origin}/`
+      }
     })
     
     if (error) throw error
@@ -50,6 +63,27 @@ export const auth = {
   getCurrentUser: () => {
     if (!supabase) return null
     return supabase.auth.getUser()
+  },
+
+  // Get current session
+  getSession: () => {
+    if (!supabase) return null
+    return supabase.auth.getSession()
+  },
+
+  // Resend email verification
+  resendEmailVerification: async (email) => {
+    if (!supabase) throw new Error('Supabase not configured')
+    
+    const { error } = await supabase.auth.resend({
+      type: 'signup',
+      email,
+      options: {
+        emailRedirectTo: `${window.location.origin}/`
+      }
+    })
+    
+    if (error) throw error
   },
 
   // Listen to auth changes

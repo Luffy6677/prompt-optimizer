@@ -14,6 +14,7 @@ import PricingPage from './components/PricingPage'
 import PaymentSuccess from './components/PaymentSuccess'
 import BillingPage from './components/BillingPage'
 import Documentation from './components/Documentation'
+import Toast from './components/Toast'
 import { AuthProvider, useAuth } from './contexts/AuthContext'
 import { SubscriptionProvider } from './contexts/SubscriptionContext'
 import { optimizePrompt } from './services/api'
@@ -26,18 +27,89 @@ function AppContent() {
   const [error, setError] = useState(null)
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false)
   const [activeTab, setActiveTab] = useState('home')
+  const [authNotification, setAuthNotification] = useState(null)
 
   const { isAuthenticated } = useAuth()
 
-  // Check URL parameters to determine if it's a payment success page
+  // Handle URL parameters and authentication callbacks
   useEffect(() => {
     const urlParams = new URLSearchParams(window.location.search)
     const sessionId = urlParams.get('session_id')
     
+    // Handle payment success
     if (sessionId && window.location.pathname.includes('payment-success')) {
       setActiveTab('payment-success')
+      return
+    }
+
+    // Handle Supabase authentication callbacks from URL hash
+    const handleAuthCallback = () => {
+      const hash = window.location.hash
+      if (hash) {
+        const hashParams = new URLSearchParams(hash.substring(1))
+        const error = hashParams.get('error')
+        const errorCode = hashParams.get('error_code')
+        const errorDescription = hashParams.get('error_description')
+        const accessToken = hashParams.get('access_token')
+        const refreshToken = hashParams.get('refresh_token')
+
+        if (error || errorCode) {
+          // Handle authentication errors
+          let errorMessage = 'Authentication failed'
+          
+          if (errorCode === 'otp_expired') {
+            errorMessage = 'Email verification link has expired. Please request a new verification email.'
+          } else if (error === 'access_denied') {
+            errorMessage = 'Email verification failed. The link may be invalid or expired.'
+          } else if (errorDescription) {
+            errorMessage = decodeURIComponent(errorDescription.replace(/\+/g, ' '))
+          }
+
+          setAuthNotification({
+            type: 'error',
+            message: errorMessage,
+            actionText: 'Request New Verification',
+            action: () => {
+              setIsAuthModalOpen(true)
+              setAuthNotification(null)
+            }
+          })
+
+          // Clean up URL hash
+          window.history.replaceState(null, null, window.location.pathname + window.location.search)
+        } else if (accessToken && refreshToken) {
+          // Successful authentication callback
+          setAuthNotification({
+            type: 'success',
+            message: 'Email verification successful! You are now logged in.',
+            autoClose: true
+          })
+
+          // Clean up URL hash
+          window.history.replaceState(null, null, window.location.pathname + window.location.search)
+        }
+      }
+    }
+
+    handleAuthCallback()
+    
+    // Listen for hash changes (in case user navigates back/forward)
+    window.addEventListener('hashchange', handleAuthCallback)
+    
+    return () => {
+      window.removeEventListener('hashchange', handleAuthCallback)
     }
   }, [])
+
+  // Auto-close success notifications
+  useEffect(() => {
+    if (authNotification?.type === 'success' && authNotification?.autoClose) {
+      const timer = setTimeout(() => {
+        setAuthNotification(null)
+      }, 5000)
+      return () => clearTimeout(timer)
+    }
+  }, [authNotification])
 
   const strategies = [
     {
@@ -284,6 +356,19 @@ function AppContent() {
         isOpen={isAuthModalOpen}
         onClose={() => setIsAuthModalOpen(false)}
       />
+
+      {/* Auth Notification Toast */}
+      {authNotification && (
+        <Toast
+          type={authNotification.type}
+          message={authNotification.message}
+          actionText={authNotification.actionText}
+          action={authNotification.action}
+          isVisible={!!authNotification}
+          onClose={() => setAuthNotification(null)}
+          duration={authNotification.type === 'error' ? 0 : 4000} // Don't auto-close error messages
+        />
+      )}
     </div>
   )
 }

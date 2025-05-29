@@ -2,15 +2,24 @@ import React, { useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { CheckCircle, XCircle, AlertCircle, X } from 'lucide-react'
 
-const Toast = ({ message, type = 'success', isVisible, onClose, duration = 4000 }) => {
+const Toast = ({ 
+  message, 
+  type = 'success', 
+  isVisible, 
+  onClose, 
+  duration = 4000,
+  actionText,
+  action
+}) => {
   useEffect(() => {
-    if (isVisible && duration > 0) {
+    if (isVisible && duration > 0 && !actionText) {
+      // Only auto-close if there's no action button
       const timer = setTimeout(() => {
         onClose()
       }, duration)
       return () => clearTimeout(timer)
     }
-  }, [isVisible, duration, onClose])
+  }, [isVisible, duration, onClose, actionText])
 
   const getIcon = () => {
     switch (type) {
@@ -38,6 +47,19 @@ const Toast = ({ message, type = 'success', isVisible, onClose, duration = 4000 
     }
   }
 
+  const getActionButtonStyles = () => {
+    switch (type) {
+      case 'success':
+        return 'bg-green-600 hover:bg-green-700 text-white'
+      case 'error':
+        return 'bg-red-600 hover:bg-red-700 text-white'
+      case 'warning':
+        return 'bg-yellow-600 hover:bg-yellow-700 text-white'
+      default:
+        return 'bg-green-600 hover:bg-green-700 text-white'
+    }
+  }
+
   return (
     <AnimatePresence>
       {isVisible && (
@@ -46,16 +68,24 @@ const Toast = ({ message, type = 'success', isVisible, onClose, duration = 4000 
           animate={{ opacity: 1, y: 0, scale: 1 }}
           exit={{ opacity: 0, y: -50, scale: 0.95 }}
           transition={{ duration: 0.2 }}
-          className="fixed top-4 right-4 z-50 max-w-sm w-full"
+          className="fixed top-4 right-4 z-50 max-w-md w-full"
         >
           <div className={`flex items-start gap-3 p-4 rounded-lg border shadow-lg ${getStyles()}`}>
             <div className="flex-shrink-0">
               {getIcon()}
             </div>
             <div className="flex-1 min-w-0">
-              <p className="text-sm font-medium whitespace-pre-line">
+              <p className="text-sm font-medium whitespace-pre-line mb-2">
                 {message}
               </p>
+              {actionText && action && (
+                <button
+                  onClick={action}
+                  className={`px-3 py-1 text-xs font-medium rounded transition-colors ${getActionButtonStyles()}`}
+                >
+                  {actionText}
+                </button>
+              )}
             </div>
             <button
               onClick={onClose}
