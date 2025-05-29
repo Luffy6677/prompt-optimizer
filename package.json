@@ -1,8 +1,7 @@
 {
   "name": "prompt-optimizer",
-  "version": "1.0.4",
+  "version": "1.0.5",
   "description": "AI-powered prompt optimization tool using Deepseek-V3",
-  "type": "module",
   "main": "index.js",
   "scripts": {
     "dev": "vite",
