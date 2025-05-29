@@ -3,9 +3,15 @@ import React, { useState, useEffect } from 'react'
 import { motion } from 'framer-motion'
 import { Brain, Sparkles, Clock } from 'lucide-react'
 
+console.log('LoadingAnimation component loaded successfully')
+
 const LoadingAnimation = () => {
+  console.log('LoadingAnimation component rendering')
+  
   const [currentStep, setCurrentStep] = useState(0)
   const [progress, setProgress] = useState(0)
+  
+  console.log('Current step:', currentStep, 'Progress:', progress)
 
   const steps = [
     'Analyzing language structure...',
@@ -14,27 +20,28 @@ const LoadingAnimation = () => {
   ]
 
   useEffect(() => {
+    console.log('LoadingAnimation useEffect running')
+    
     // 模拟步骤进度
     const stepInterval = setInterval(() => {
       setCurrentStep((prev) => {
-        if (prev < steps.length - 1) {
-          return prev + 1
-        }
-        return 0 // 循环回到第一步
+        const next = prev < steps.length - 1 ? prev + 1 : 0
+        console.log('Step changed from', prev, 'to', next)
+        return next
       })
     }, 2000) // 每2秒切换一步
 
     // 模拟进度条
     const progressInterval = setInterval(() => {
       setProgress((prev) => {
-        if (prev < 95) {
-          return prev + Math.random() * 10 // 随机增加进度
-        }
-        return 95 // 最多到95%，避免到100%
+        const next = prev < 95 ? prev + Math.random() * 10 : 95
+        console.log('Progress changed from', prev, 'to', next)
+        return next
       })
     }, 500)
 
     return () => {
+      console.log('LoadingAnimation cleanup')
       clearInterval(stepInterval)
       clearInterval(progressInterval)
     }
