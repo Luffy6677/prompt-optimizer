@@ -7,10 +7,30 @@
   "cleanUrls": true,
   "functions": {
     "api/webhook.js": {
-      "maxDuration": 10
+      "maxDuration": 10,
+      "runtime": "nodejs18.x"
+    },
+    "api/optimize.js": {
+      "runtime": "nodejs18.x"
+    },
+    "api/create-checkout-session.js": {
+      "runtime": "nodejs18.x"
+    },
+    "api/create-portal-session.js": {
+      "runtime": "nodejs18.x"
+    },
+    "api/checkout-session.js": {
+      "runtime": "nodejs18.x"
+    },
+    "api/subscription.js": {
+      "runtime": "nodejs18.x"
     }
   },
   "rewrites": [
+    {
+      "source": "/api/(.*)",
+      "destination": "/api/$1"
+    },
     {
       "source": "/(.*)",
       "destination": "/index.html"
