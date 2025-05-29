@@ -1,3 +1,4 @@
+// Fixed currentStep undefined error - Updated 2024-12-24
 import React, { useState, useEffect } from 'react'
 import { motion } from 'framer-motion'
 import { Brain, Sparkles, Clock } from 'lucide-react'
