@@ -6,24 +6,24 @@
   "devCommand": "npm run dev",
   "cleanUrls": true,
   "functions": {
-    "api/webhook.mjs": {
+    "api/webhook.js": {
       "maxDuration": 10,
-      "runtime": "nodejs18.x"
+      "runtime": "nodejs20.x"
     },
-    "api/optimize.mjs": {
-      "runtime": "nodejs18.x"
+    "api/optimize.js": {
+      "runtime": "nodejs20.x"
     },
-    "api/create-checkout-session.mjs": {
-      "runtime": "nodejs18.x"
+    "api/create-checkout-session.js": {
+      "runtime": "nodejs20.x"
     },
-    "api/create-portal-session.mjs": {
-      "runtime": "nodejs18.x"
+    "api/create-portal-session.js": {
+      "runtime": "nodejs20.x"
     },
-    "api/checkout-session.mjs": {
-      "runtime": "nodejs18.x"
+    "api/checkout-session.js": {
+      "runtime": "nodejs20.x"
     },
-    "api/subscription.mjs": {
-      "runtime": "nodejs18.x"
+    "api/subscription.js": {
+      "runtime": "nodejs20.x"
     }
   },
   "rewrites": [
