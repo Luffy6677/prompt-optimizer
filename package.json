@@ -7,6 +7,7 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build",
+    "build:analyze": "vite build --mode analyze",
     "preview": "vite preview",
     "server": "node server/index.js",
     "start": "node start.js",
@@ -14,7 +15,10 @@
     "build:prod": "NODE_ENV=production vite build",
     "deploy:build": "npm install && npm run build:prod",
     "serve": "npm run build && npm start",
-    "health-check": "curl -f http://localhost:3000 || exit 1"
+    "health-check": "curl -f http://localhost:3000 || exit 1",
+    "test:lighthouse": "lighthouse https://your-domain.com --output=html --output-path=./lighthouse-report.html",
+    "test:security": "npm audit --audit-level moderate",
+    "optimize": "npm run build:prod && npm run test:security"
   },
   "dependencies": {
     "@stripe/react-stripe-js": "^3.7.0",
