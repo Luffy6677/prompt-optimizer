@@ -19,13 +19,22 @@ const getStripe = () => {
 
 // Stripe 支付服务
 
-const API_BASE_URL = process.env.NODE_ENV === 'production' 
-  ? '' // 生产环境使用相对路径，Vercel 会自动处理
-  : 'http://localhost:3000' // 开发环境，指向 Vercel dev 端口
+// 修复 API_BASE_URL 配置
+const API_BASE_URL = import.meta.env.DEV 
+  ? 'http://localhost:3000' // 开发环境
+  : '' // 生产环境使用相对路径
+
+console.log('🔧 Stripe API Base URL:', API_BASE_URL)
+console.log('🌍 Environment:', import.meta.env.DEV ? 'development' : 'production')
 
 // 创建Stripe Checkout会话并重定向
 export async function createAndRedirectToCheckout(priceId, userId) {
   try {
+    console.log('🛒 Creating checkout session...')
+    console.log('💰 Price ID:', priceId)
+    console.log('👤 User ID:', userId)
+    console.log('🔗 API URL:', `${API_BASE_URL}/api/create-checkout-session`)
+    
     const response = await fetch(`${API_BASE_URL}/api/create-checkout-session`, {
       method: 'POST',
       headers: {
@@ -39,22 +48,31 @@ export async function createAndRedirectToCheckout(priceId, userId) {
       }),
     })
 
+    console.log('📡 Response status:', response.status)
+    console.log('📡 Response headers:', response.headers)
+
     if (!response.ok) {
       const errorData = await response.json()
+      console.error('❌ API Error:', errorData)
       throw new Error(errorData.message || '创建支付会话失败')
     }
 
     const { sessionId } = await response.json()
+    console.log('✅ Session created:', sessionId)
 
     // 重定向到Stripe Checkout
-    const stripe = window.Stripe(import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY)
+    const stripe = await getStripe()
+    if (!stripe) {
+      throw new Error('Failed to load Stripe')
+    }
+    
     const { error } = await stripe.redirectToCheckout({ sessionId })
 
     if (error) {
       throw new Error(error.message)
     }
   } catch (error) {
-    console.error('Checkout error:', error)
+    console.error('❌ Checkout error:', error)
     throw error
   }
 }
