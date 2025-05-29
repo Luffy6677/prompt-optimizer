@@ -5,6 +5,7 @@ import PromptInput from './components/PromptInput'
 import OptimizationResults from './components/OptimizationResults'
 import OptimizationStrategies from './components/OptimizationStrategies'
 import LoadingAnimation from './components/LoadingAnimation'
+import ErrorBoundary from './components/ErrorBoundary'
 import Header from './components/Header'
 import Footer from './components/Footer'
 import HowToUse from './components/HowToUse'
@@ -291,7 +292,9 @@ function AppContent() {
                 </h2>
                 
                 {isLoading ? (
-                  <LoadingAnimation />
+                  <ErrorBoundary>
+                    <LoadingAnimation />
+                  </ErrorBoundary>
                 ) : optimizedResults ? (
                   <OptimizationResults 
                     results={optimizedResults}
