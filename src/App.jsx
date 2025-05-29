@@ -4,7 +4,7 @@ import { Sparkles, Send, Copy, RefreshCw, Lightbulb, Target, Zap } from 'lucide-
 import PromptInput from './components/PromptInput'
 import OptimizationResults from './components/OptimizationResults'
 import OptimizationStrategies from './components/OptimizationStrategies'
-import LoadingAnimation from './components/LoadingAnimation'
+import SimpleLoadingAnimation from './components/SimpleLoadingAnimation'
 import Header from './components/Header'
 import Footer from './components/Footer'
 import HowToUse from './components/HowToUse'
@@ -291,7 +291,7 @@ function AppContent() {
                 </h2>
                 
                 {isLoading ? (
-                  <LoadingAnimation />
+                  <SimpleLoadingAnimation />
                 ) : optimizedResults ? (
                   <OptimizationResults 
                     results={optimizedResults}
