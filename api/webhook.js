@@ -1,14 +1,21 @@
 import Stripe from 'stripe'
 
-const stripe = process.env.STRIPE_SECRET_KEY ? new Stripe(process.env.STRIPE_SECRET_KEY) : null
+const stripe = new Stripe(process.env.STRIPE_SECRET_KEY)
 
-// 读取原始请求体的辅助函数
-const getRawBody = async (req) => {
-  const chunks = []
-  for await (const chunk of req) {
-    chunks.push(typeof chunk === 'string' ? Buffer.from(chunk) : chunk)
-  }
-  return Buffer.concat(chunks)
+// Helper function to read raw request body
+async function getRawBody(req) {
+  return new Promise((resolve, reject) => {
+    let body = ''
+    req.on('data', (chunk) => {
+      body += chunk.toString()
+    })
+    req.on('end', () => {
+      resolve(body)
+    })
+    req.on('error', (err) => {
+      reject(err)
+    })
+  })
 }
 
 export default async function handler(req, res) {
@@ -17,87 +24,74 @@ export default async function handler(req, res) {
   }
 
   const sig = req.headers['stripe-signature']
-  const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET
+  const endpointSecret = process.env.STRIPE_WEBHOOK_SECRET
 
-  if (!stripe || !webhookSecret) {
-    console.error('Stripe webhook not configured properly')
-    return res.status(500).json({ error: 'Stripe webhook not configured' })
+  if (!endpointSecret) {
+    console.error('❌ Missing STRIPE_WEBHOOK_SECRET')
+    return res.status(400).json({ error: 'Missing webhook secret' })
   }
 
   let event
 
   try {
-    // 获取原始请求体用于签名验证
-    const rawBody = await getRawBody(req)
+    // Get raw request body for signature verification
+    const body = await getRawBody(req)
     
-    event = stripe.webhooks.constructEvent(rawBody, sig, webhookSecret)
-    console.log('✅ Webhook signature verified successfully')
+    // Verify webhook signature
+    event = stripe.webhooks.constructEvent(body, sig, endpointSecret)
+    console.log('✅ Webhook signature verified')
   } catch (err) {
     console.error('❌ Webhook signature verification failed:', err.message)
-    return res.status(400).json({ error: `Webhook Error: ${err.message}` })
+    return res.status(400).json({ error: `Webhook signature verification failed: ${err.message}` })
   }
 
-  console.log(`🔔 Processing webhook event: ${event.type}`)
-
-  // 处理事件
-  try {
-    switch (event.type) {
-      case 'checkout.session.completed':
-        const session = event.data.object
-        console.log('💳 Payment succeeded for session:', session.id)
-        console.log('👤 Customer:', session.customer)
-        console.log('📧 Customer email:', session.customer_details?.email)
-        
-        // 这里可以更新数据库，记录订阅信息
-        // 例如：更新用户的订阅状态、重置使用次数等
-        break
-
-      case 'customer.subscription.created':
-        const createdSubscription = event.data.object
-        console.log('🆕 Subscription created:', createdSubscription.id)
-        console.log('👤 Customer:', createdSubscription.customer)
-        console.log('💰 Price:', createdSubscription.items.data[0]?.price.id)
-        break
-
-      case 'customer.subscription.updated':
-        const updatedSubscription = event.data.object
-        console.log('🔄 Subscription updated:', updatedSubscription.id)
-        console.log('📊 Status:', updatedSubscription.status)
-        break
-
-      case 'customer.subscription.deleted':
-        const deletedSubscription = event.data.object
-        console.log('❌ Subscription deleted:', deletedSubscription.id)
-        console.log('👤 Customer:', deletedSubscription.customer)
-        break
-
-      case 'invoice.payment_succeeded':
-        const invoice = event.data.object
-        console.log('✅ Payment succeeded for invoice:', invoice.id)
-        console.log('💰 Amount:', invoice.amount_paid / 100, invoice.currency)
-        break
-
-      case 'invoice.payment_failed':
-        const failedInvoice = event.data.object
-        console.log('💸 Payment failed for invoice:', failedInvoice.id)
-        console.log('👤 Customer:', failedInvoice.customer)
-        break
-
-      default:
-        console.log(`ℹ️ Unhandled event type: ${event.type}`)
-    }
-
-    console.log('✅ Webhook event processed successfully')
-    res.json({ received: true, type: event.type })
-  } catch (error) {
-    console.error('❌ Error processing webhook event:', error)
-    res.status(500).json({ error: 'Failed to process webhook event' })
+  // Handle the event
+  switch (event.type) {
+    case 'checkout.session.completed':
+      const session = event.data.object
+      console.log('🎉 Payment was successful:', session.id)
+      console.log('👤 Customer ID:', session.customer)
+      console.log('💰 Amount total:', session.amount_total)
+      
+      // Here you can update database, record subscription info
+      // For example: update user subscription status, reset usage count, etc.
+      
+      break
+    case 'customer.subscription.created':
+      const subscription = event.data.object
+      console.log('🎯 Subscription created:', subscription.id)
+      console.log('👤 Customer ID:', subscription.customer)
+      console.log('📅 Status:', subscription.status)
+      break
+    case 'customer.subscription.updated':
+      const updatedSubscription = event.data.object
+      console.log('🔄 Subscription updated:', updatedSubscription.id)
+      console.log('📅 New status:', updatedSubscription.status)
+      break
+    case 'customer.subscription.deleted':
+      const deletedSubscription = event.data.object
+      console.log('❌ Subscription cancelled:', deletedSubscription.id)
+      break
+    case 'invoice.payment_succeeded':
+      const invoice = event.data.object
+      console.log('💳 Invoice payment succeeded:', invoice.id)
+      console.log('💰 Amount paid:', invoice.amount_paid)
+      break
+    case 'invoice.payment_failed':
+      const failedInvoice = event.data.object
+      console.log('❌ Invoice payment failed:', failedInvoice.id)
+      break
+    default:
+      console.log(`🤷‍♂️ Unhandled event type: ${event.type}`)
   }
+
+  // Return a response to acknowledge receipt of the event
+  res.json({ received: true })
 }
 
-// Vercel configuration for webhook handling
+// This tells Vercel to use the raw body parser
 export const config = {
   api: {
-    bodyParser: false, // 禁用默认的 body parser 以获取原始请求体
+    bodyParser: false, // Disable default body parser to get raw request body
   },
 } 

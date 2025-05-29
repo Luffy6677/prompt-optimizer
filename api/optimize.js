@@ -6,54 +6,54 @@ const deepseek = process.env.DEEPSEEK_API_KEY &&
   new OpenAI({
     apiKey: process.env.DEEPSEEK_API_KEY,
     baseURL: 'https://api.deepseek.com/v1',
-    timeout: 30000, // 30秒超时，适合Deepseek-V3的响应时间
+    timeout: 30000, // 30 second timeout, suitable for Deepseek-V3 response time
   }) : null
 
 // Optimization strategies
 const optimizationStrategies = {
   comprehensive: {
-    name: '综合优化',
-    systemPrompt: `你是一个专业的提示词优化专家，擅长使用Deepseek-V3的强大推理能力。请分析用户提供的提示词，并从以下几个方面进行综合优化：
-1. 清晰度：确保指令明确、易理解
-2. 具体性：增加必要的细节和约束条件  
-3. 结构化：优化语言结构和逻辑顺序
-4. 有效性：提高获得期望结果的可能性
-5. 推理引导：利用链式思考方式引导更好的推理过程
+    name: 'Comprehensive Optimization',
+    systemPrompt: `You are a professional prompt optimization expert, skilled in utilizing Deepseek-V3's powerful reasoning capabilities. Please analyze the user-provided prompt and optimize it comprehensively from the following aspects:
+1. Clarity: Ensure instructions are clear and easy to understand
+2. Specificity: Add necessary details and constraints
+3. Structure: Optimize language structure and logical order
+4. Effectiveness: Improve the likelihood of achieving desired results
+5. Reasoning guidance: Use chain-of-thought to guide better reasoning processes
 
-请充分发挥你的推理能力，返回优化后的提示词以及详细的分析报告。`
+Please fully utilize your reasoning capabilities and return the optimized prompt along with a detailed analysis report.`
   },
   clarity: {
-    name: '清晰度优化',
-    systemPrompt: `你是一个专注于语言清晰度的提示词优化专家，具备Deepseek-V3的强大语言理解能力。请重点关注：
-1. 消除歧义表达
-2. 简化复杂句式
-3. 使用更准确的词汇
-4. 确保指令易于理解
-5. 提供清晰的逻辑链条
+    name: 'Clarity Optimization',
+    systemPrompt: `You are a prompt optimization expert focused on language clarity, with Deepseek-V3's powerful language understanding capabilities. Please focus on:
+1. Eliminating ambiguous expressions
+2. Simplifying complex sentence structures
+3. Using more accurate vocabulary
+4. Ensuring instructions are easy to understand
+5. Providing clear logical chains
 
-请运用你的深度推理能力，返回优化后的提示词并说明改进之处。`
+Please use your deep reasoning abilities to return an optimized prompt and explain the improvements.`
   },
   specificity: {
-    name: '具体性增强',
-    systemPrompt: `你是一个专注于提示词具体性的优化专家，能够进行深度的细节分析。请重点关注：
-1. 添加具体的要求和约束
-2. 明确输出格式和结构
-3. 提供清晰的示例或参考
-4. 细化任务的各个步骤
-5. 建立明确的成功标准
+    name: 'Specificity Enhancement',
+    systemPrompt: `You are an optimization expert focused on prompt specificity, capable of in-depth detail analysis. Please focus on:
+1. Adding specific requirements and constraints
+2. Clarifying output format and structure
+3. Providing clear examples or references
+4. Detailing each step of the task
+5. Establishing clear success criteria
 
-请运用Deepseek-V3的强大分析能力，返回更具体的提示词并说明增加的具体要求。`
+Please use Deepseek-V3's powerful analytical capabilities to return a more specific prompt and explain the added specific requirements.`
   },
   creativity: {
-    name: '创意激发',
-    systemPrompt: `你是一个专注于激发创意的提示词优化专家，具备Deepseek-V3的创新思维能力。请重点关注：
-1. 鼓励多角度思考
-2. 激发创新思维
-3. 引导发散性思考
-4. 促进原创性表达
-5. 建立创意思维框架
+    name: 'Creativity Enhancement',
+    systemPrompt: `You are a prompt optimization expert focused on inspiring creativity, with Deepseek-V3's innovative thinking capabilities. Please focus on:
+1. Encouraging multi-perspective thinking
+2. Inspiring innovative thinking
+3. Guiding divergent thinking
+4. Promoting original expression
+5. Building creative thinking frameworks
 
-请发挥你的创造性推理能力，返回能够激发更多创意的提示词并说明优化策略。`
+Please use your creative reasoning abilities to return prompts that can inspire more creativity and explain optimization strategies.`
   }
 }
 
@@ -72,31 +72,31 @@ async function optimizePromptWithAI(prompt, strategy) {
             role: "system",
             content: optimizationStrategies[strategy].systemPrompt + `
             
-请严格按照以下JSON格式返回结果，不要包含任何markdown标记或代码块标记：
+Please strictly return the result in the following JSON format, without any markdown markers or code block markers:
 {
-  "optimizedPrompt": "优化后的提示词",
+  "optimizedPrompt": "Optimized prompt",
   "scores": {
-    "clarity": 评分(1-10),
-    "specificity": 评分(1-10),
-    "effectiveness": 评分(1-10)
+    "clarity": score(1-10),
+    "specificity": score(1-10),
+    "effectiveness": score(1-10)
   },
   "analysis": {
-    "improvements": "改进说明",
-    "issues": ["原提示词的问题列表"]
+    "improvements": "Improvement description",
+    "issues": ["List of original prompt issues"]
   },
   "alternatives": [
     {
-      "prompt": "其他建议的提示词",
-      "reason": "建议理由"
+      "prompt": "Alternative suggested prompt",
+      "reason": "Recommendation reason"
     }
   ]
 }
 
-重要：请直接返回JSON对象，不要使用\`\`\`json标记或任何其他格式化标记。`
+Important: Please return the JSON object directly, without using \`\`\`json markers or any other formatting markers.`
           },
           {
             role: "user",
-            content: `请优化这个提示词：${prompt}`
+            content: `Please optimize this prompt: ${prompt}`
           }
         ],
         temperature: 0.7,
@@ -138,133 +138,131 @@ async function optimizePromptWithAI(prompt, strategy) {
 function mockOptimizationResponse(originalPrompt, strategy) {
   const getTopicFromPrompt = (prompt) => {
     const keywords = prompt.toLowerCase()
-    if (keywords.includes('代码') || keywords.includes('编程') || keywords.includes('程序')) return '编程技术'
-    if (keywords.includes('营销') || keywords.includes('推广') || keywords.includes('销售')) return '市场营销'
-    if (keywords.includes('文章') || keywords.includes('写作') || keywords.includes('内容')) return '内容创作'
-    if (keywords.includes('设计') || keywords.includes('UI') || keywords.includes('界面')) return '设计'
-    if (keywords.includes('数据') || keywords.includes('分析') || keywords.includes('统计')) return '数据分析'
-    return '相关领域'
+    if (keywords.includes('code') || keywords.includes('programming') || keywords.includes('develop')) return 'programming'
+    if (keywords.includes('marketing') || keywords.includes('sales') || keywords.includes('promotion')) return 'marketing'
+    if (keywords.includes('write') || keywords.includes('content') || keywords.includes('article')) return 'content creation'
+    if (keywords.includes('design') || keywords.includes('ui') || keywords.includes('interface')) return 'design'
+    if (keywords.includes('data') || keywords.includes('analysis') || keywords.includes('statistics')) return 'data analysis'
+    return 'relevant field'
   }
 
   const mockResponses = {
     comprehensive: {
-      optimizedPrompt: `作为专业的${getTopicFromPrompt(originalPrompt)}专家，请为我${originalPrompt.replace('写', '撰写').replace('做', '制作')}。
+      optimizedPrompt: `As a professional ${getTopicFromPrompt(originalPrompt)} expert, please help me ${originalPrompt.replace('write', 'create').replace('make', 'develop')}.
 
-要求：
-1. 内容结构清晰，逻辑性强
-2. 语言专业准确，通俗易懂  
-3. 包含具体的例子和数据支撑
-4. 字数控制在800-1200字
-5. 请采用总-分-总的结构
+Requirements:
+1. Content structure should be clear with strong logic
+2. Language should be professional, accurate, and easy to understand
+3. Include specific examples and data support
+4. Word count should be 800-1200 words
+5. Please use a general-specific-general structure
 
-请在回答中体现您的专业知识和实践经验。`,
+Please reflect your professional knowledge and practical experience in your response.`,
       scores: {
         clarity: 8,
         specificity: 9,
         effectiveness: 8
       },
       analysis: {
-        improvements: "增加了角色设定、明确了输出要求、指定了字数范围和结构要求，使提示词更加具体和专业。",
+        improvements: "Added role setting, clarified output requirements, specified word count range and structure requirements, making the prompt more specific and professional.",
         issues: [
-          "原提示词过于简单，缺乏具体要求",
-          "没有明确角色和输出格式",
-          "缺少约束条件和质量标准"
+          "Original prompt was too simple, lacking specific requirements",
+          "No clear role and output format specified",
+          "Lacked constraints and quality standards"
         ]
       },
       alternatives: [
         {
-          prompt: `请帮我创建一份关于${getTopicFromPrompt(originalPrompt)}的详细内容，包含背景介绍、核心观点、实例分析和总结建议。`,
-          reason: "更注重内容的完整性和结构化"
+          prompt: `Please help me create detailed content about ${getTopicFromPrompt(originalPrompt)}, including background introduction, core viewpoints, case analysis, and summary recommendations.`,
+          reason: "More focused on content completeness and structure"
         },
         {
-          prompt: `以问答形式为我介绍${getTopicFromPrompt(originalPrompt)}，包含5-8个核心问题及其详细解答。`,
-          reason: "采用问答形式，更易于理解和记忆"
+          prompt: `Introduce ${getTopicFromPrompt(originalPrompt)} in Q&A format, including 5-8 core questions and their detailed answers.`,
+          reason: "Uses Q&A format, easier to understand and remember"
         }
       ]
     },
     clarity: {
-      optimizedPrompt: `请为我清晰地解释${getTopicFromPrompt(originalPrompt)}的基本概念、主要特点和实际应用。
+      optimizedPrompt: `Please clearly explain the basic concepts, main characteristics, and practical applications of ${getTopicFromPrompt(originalPrompt)}.
 
-请用简单易懂的语言，避免专业术语，如果必须使用请加以解释。`,
+Please use simple and understandable language, avoid technical jargon, and if you must use them, please explain them.`,
       scores: {
         clarity: 9,
         specificity: 7,
         effectiveness: 8
       },
       analysis: {
-        improvements: "简化了语言表达，明确了解释要求，避免了复杂的术语使用。",
+        improvements: "Simplified language expression, clarified explanation requirements, avoided complex terminology usage.",
         issues: [
-          "原提示词表达不够清晰",
-          "可能包含歧义的表述",
-          "缺乏明确的语言要求"
+          "Original prompt expression was not clear enough",
+          "May contain ambiguous statements",
+          "Lacked clear language requirements"
         ]
       },
       alternatives: [
         {
-          prompt: `用通俗易懂的话告诉我${getTopicFromPrompt(originalPrompt)}是什么，有什么用处。`,
-          reason: "更加口语化，易于理解"
+          prompt: `Explain ${getTopicFromPrompt(originalPrompt)} step by step, using examples to illustrate each concept.`,
+          reason: "Step-by-step explanation with examples for better understanding"
         }
       ]
     },
     specificity: {
-      optimizedPrompt: `请按照以下具体要求为我${originalPrompt}：
+      optimizedPrompt: `Please provide a comprehensive analysis of ${getTopicFromPrompt(originalPrompt)} with the following specific requirements:
 
-具体要求：
-- 输出格式：分段式结构，每段不超过150字
-- 内容深度：包含基础概念、实际案例和操作建议
-- 目标受众：${getTopicFromPrompt(originalPrompt)}初学者
-- 完成时间：提供可在30分钟内阅读完的内容量
-- 质量标准：确保信息准确性，提供可验证的资料来源
+1. Definition and scope
+2. Key components or elements
+3. Implementation steps or methodology
+4. Best practices and common pitfalls
+5. Measurable outcomes or success metrics
 
-请确保每个要求都得到满足。`,
+Format: Use bullet points and numbered lists for clarity.`,
       scores: {
         clarity: 8,
         specificity: 10,
         effectiveness: 9
       },
       analysis: {
-        improvements: "添加了详细的输出格式、目标受众、时间约束和质量标准，使要求更加具体明确。",
+        improvements: "Added specific structure requirements, clear deliverables, and formatting guidelines.",
         issues: [
-          "原提示词缺乏具体要求",
-          "没有明确的成功标准",
-          "缺少输出格式说明"
+          "Original prompt lacked specific requirements",
+          "No clear structure or format specified",
+          "Missing measurable criteria"
         ]
       },
       alternatives: [
         {
-          prompt: `制作一个${getTopicFromPrompt(originalPrompt)}的完整指南，包含步骤说明、注意事项和检查清单。`,
-          reason: "提供更实用的指南格式"
+          prompt: `Create a detailed guide for ${getTopicFromPrompt(originalPrompt)} including prerequisites, step-by-step instructions, and troubleshooting tips.`,
+          reason: "Focuses on practical implementation with troubleshooting support"
         }
       ]
     },
     creativity: {
-      optimizedPrompt: `请以创新的视角为我${originalPrompt}，要求：
+      optimizedPrompt: `Think creatively about ${getTopicFromPrompt(originalPrompt)} and explore it from multiple innovative angles:
 
-创意要求：
-1. 至少提供3个不同角度的独特观点
-2. 结合跨领域的知识和经验
-3. 使用类比、故事或比喻来增强理解
-4. 鼓励批判性思维和质疑精神
-5. 提供启发性的问题供进一步思考
+1. Challenge conventional approaches
+2. Propose novel solutions or perspectives
+3. Connect ideas from different fields
+4. Consider future possibilities and trends
+5. Generate original concepts or frameworks
 
-请跳出常规思维，展现您的创造力和想象力。`,
+Please think outside the box and surprise me with your insights.`,
       scores: {
         clarity: 7,
         specificity: 8,
         effectiveness: 9
       },
       analysis: {
-        improvements: "增加了创意思维的引导，要求多角度思考和跨领域知识整合，激发更有创意的回答。",
+        improvements: "Enhanced creative thinking prompts, encouraged innovation and cross-field connections.",
         issues: [
-          "原提示词缺乏创意激发",
-          "思维角度单一",
-          "没有鼓励创新思考"
+          "Original prompt was too conventional",
+          "Lacked creativity triggers",
+          "Missing innovation encouragement"
         ]
       },
       alternatives: [
         {
-          prompt: `如果你是一位来自未来的${getTopicFromPrompt(originalPrompt)}专家，你会如何重新定义和讲解这个概念？`,
-          reason: "通过时空转换激发创新思维"
+          prompt: `Reimagine ${getTopicFromPrompt(originalPrompt)} as if you were from the future looking back, or from a completely different industry perspective.`,
+          reason: "Uses perspective shifting to unlock creative thinking"
         }
       ]
     }
@@ -277,7 +275,7 @@ function mockOptimizationResponse(originalPrompt, strategy) {
 export default async function handler(req, res) {
   // Enable CORS
   res.setHeader('Access-Control-Allow-Origin', '*')
-  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS')
+  res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS')
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type')
   
   if (req.method === 'OPTIONS') {
@@ -292,28 +290,46 @@ export default async function handler(req, res) {
   try {
     const { prompt, strategy = 'comprehensive' } = req.body
 
-    if (!prompt) {
-      return res.status(400).json({ error: 'Prompt is required' })
+    if (!prompt || prompt.trim().length === 0) {
+      return res.status(400).json({ 
+        error: 'Missing prompt',
+        message: 'Please provide a prompt to optimize'
+      })
+    }
+
+    if (prompt.length > 2000) {
+      return res.status(400).json({ 
+        error: 'Prompt too long',
+        message: 'Prompt must be less than 2000 characters'
+      })
     }
 
     if (!optimizationStrategies[strategy]) {
-      return res.status(400).json({ error: 'Invalid strategy' })
+      return res.status(400).json({ 
+        error: 'Invalid strategy',
+        message: 'Available strategies: ' + Object.keys(optimizationStrategies).join(', ')
+      })
     }
 
-    console.log(`🔄 Processing optimization request`)
-    console.log(`📝 Prompt: ${prompt}`)
-    console.log(`🎯 Strategy: ${strategy}`)
+    console.log('🚀 Starting prompt optimization')
+    console.log('📝 Prompt:', prompt)
+    console.log('🎯 Strategy:', strategy)
+    console.log('🔑 Deepseek configured:', !!deepseek)
 
     const result = await optimizePromptWithAI(prompt, strategy)
 
     console.log('✅ Optimization completed successfully')
-    return res.status(200).json(result)
-
+    res.json(result)
   } catch (error) {
-    console.error('❌ Error in optimization:', error)
-    return res.status(500).json({ 
-      error: 'Internal server error',
-      message: error.message 
+    console.error('❌ Optimization error:', error.message)
+    console.error('❌ Full error details:', {
+      name: error.name,
+      message: error.message,
+      stack: error.stack
+    })
+    res.status(500).json({ 
+      error: 'Optimization failed',
+      message: 'Failed to optimize prompt: ' + error.message
     })
   }
 } 

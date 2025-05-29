@@ -1,4 +1,158 @@
-import { supabase } from './supabase'
+import { supabase } from './supabase.js'
+
+// Check if Supabase is configured
+if (!supabase) {
+  console.warn('⚠️ Supabase not configured - favorites functionality will not work')
+}
+
+// Favorites table structure:
+// - id: uuid (primary key)
+// - user_id: uuid (references auth.users)
+// - prompt: text
+// - optimized_prompt: text
+// - created_at: timestamp
+
+// Favorites service
+
+// Add to favorites
+export async function addToFavorites(userId, prompt, optimizedPrompt) {
+  if (!supabase) {
+    console.warn('⚠️ Supabase not configured - cannot add to favorites')
+    return { success: false, error: 'Favorites not available' }
+  }
+
+  try {
+    console.log('📌 Adding to favorites:', { userId, prompt: prompt.substring(0, 50) + '...' })
+    
+    const { data, error } = await supabase
+      .from('favorites')
+      .insert([
+        {
+          user_id: userId,
+          prompt: prompt,
+          optimized_prompt: optimizedPrompt,
+          created_at: new Date().toISOString()
+        }
+      ])
+      .select()
+
+    if (error) {
+      console.error('❌ Error adding to favorites:', error)
+      
+      // Safely check error type
+      const errorMessage = error?.message || ''
+      const errorCode = error?.code || ''
+      const errorStatus = error?.status || 0
+      
+      // Check if table doesn't exist error
+      // 404 status usually indicates table doesn't exist
+      if (errorStatus === 404 || 
+          errorCode === 'PGRST116' ||
+          errorMessage.includes('relation') && errorMessage.includes('does not exist') ||
+          errorMessage.includes('table') && errorMessage.includes('not found') ||
+          errorMessage.includes('undefined') ||
+          (typeof error === 'object' && error !== null && 
+           Object.keys(error).length === 0)) { // Empty error object might also indicate table doesn't exist
+        
+        return { 
+          success: false, 
+          error: 'Favorites table not yet created. Please contact administrator.' 
+        }
+      }
+      
+      // If it's an error we threw, re-throw it directly
+      if (error instanceof Error) {
+        return { success: false, error: error.message }
+      }
+      
+      // Other unknown exceptions
+      return { success: false, error: 'Failed to add to favorites' }
+    }
+
+    console.log('✅ Successfully added to favorites:', data)
+    return { success: true, data: data[0] }
+  } catch (error) {
+    console.error('❌ Exception adding to favorites:', error)
+    return { success: false, error: error.message || 'Unknown error' }
+  }
+}
+
+// Get user favorites list
+export async function getFavorites(userId) {
+  if (!supabase) {
+    console.warn('⚠️ Supabase not configured - cannot get favorites')
+    return { success: false, error: 'Favorites not available' }
+  }
+
+  try {
+    console.log('📋 Getting favorites for user:', userId)
+    
+    const { data, error } = await supabase
+      .from('favorites')
+      .select('*')
+      .eq('user_id', userId)
+      .order('created_at', { ascending: false })
+
+    if (error) {
+      console.error('❌ Error getting favorites:', error)
+      
+      // Safely check error type
+      const errorMessage = error?.message || ''
+      const errorCode = error?.code || ''
+      const errorStatus = error?.status || 0
+      
+      // Check if table doesn't exist error
+      if (errorStatus === 404 || 
+          errorCode === 'PGRST116' ||
+          errorMessage.includes('relation') && errorMessage.includes('does not exist') ||
+          errorMessage.includes('table') && errorMessage.includes('not found')) {
+        
+        return { 
+          success: true, 
+          data: [], // Return empty array when table doesn't exist
+          message: 'Favorites table not yet created'
+        }
+      }
+      
+      return { success: false, error: error.message || 'Failed to get favorites' }
+    }
+
+    console.log(`✅ Retrieved ${data?.length || 0} favorites`)
+    return { success: true, data: data || [] }
+  } catch (error) {
+    console.error('❌ Exception getting favorites:', error)
+    return { success: false, error: error.message || 'Unknown error' }
+  }
+}
+
+// Remove from favorites
+export async function removeFromFavorites(userId, favoriteId) {
+  if (!supabase) {
+    console.warn('⚠️ Supabase not configured - cannot remove from favorites')
+    return { success: false, error: 'Favorites not available' }
+  }
+
+  try {
+    console.log('🗑️ Removing from favorites:', { userId, favoriteId })
+    
+    const { error } = await supabase
+      .from('favorites')
+      .delete()
+      .eq('id', favoriteId)
+      .eq('user_id', userId) // Security: ensure user can only delete their own favorites
+
+    if (error) {
+      console.error('❌ Error removing from favorites:', error)
+      return { success: false, error: error.message || 'Failed to remove from favorites' }
+    }
+
+    console.log('✅ Successfully removed from favorites')
+    return { success: true }
+  } catch (error) {
+    console.error('❌ Exception removing from favorites:', error)
+    return { success: false, error: error.message || 'Unknown error' }
+  }
+}
 
 // 检查Supabase是否配置
 const checkSupabaseConfig = () => {

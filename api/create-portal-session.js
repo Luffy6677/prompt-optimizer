@@ -24,7 +24,7 @@ export default async function handler(req, res) {
       console.error('❌ Stripe not configured - missing STRIPE_SECRET_KEY')
       return res.status(500).json({ 
         error: 'Stripe not configured',
-        message: '请配置 STRIPE_SECRET_KEY 环境变量'
+        message: 'Please configure STRIPE_SECRET_KEY environment variable'
       })
     }
 
@@ -33,22 +33,22 @@ export default async function handler(req, res) {
 
     if (!customerId) {
       return res.status(400).json({ 
-        error: 'Missing required parameter: customerId',
-        message: '缺少必要参数：customerId'
+        error: 'Missing required parameters',
+        message: 'Missing required parameter: customerId'
       })
     }
 
-    // 构建返回URL
+    // Build return URL
     const origin = req.headers.origin || req.headers.host || 'http://localhost:3001'
     const baseUrl = origin.startsWith('http') ? origin : `http://${origin}`
-    const finalReturnUrl = returnUrl || `${baseUrl}/billing`
+    const defaultReturnUrl = `${baseUrl}/pricing`
 
-    console.log('🔗 Creating portal session with return URL:', finalReturnUrl)
+    console.log('🔗 Creating portal session with return URL:', defaultReturnUrl)
 
-    // 创建客户门户会话
+    // Create customer portal session
     const session = await stripe.billingPortal.sessions.create({
       customer: customerId,
-      return_url: finalReturnUrl,
+      return_url: returnUrl || defaultReturnUrl,
     })
 
     console.log('✅ Portal session created successfully:', session.id)
@@ -64,7 +64,7 @@ export default async function handler(req, res) {
     })
     res.status(500).json({ 
       error: 'Failed to create portal session',
-      message: '创建客户门户会话失败：' + error.message
+      message: 'Failed to create customer portal session: ' + error.message
     })
   }
 } 

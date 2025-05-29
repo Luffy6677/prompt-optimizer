@@ -17,17 +17,17 @@ const getStripe = () => {
   return stripePromise
 }
 
-// Stripe 支付服务
+// Stripe payment services
 
-// 修复 API_BASE_URL 配置
+// Fixed API_BASE_URL configuration for production
 const API_BASE_URL = import.meta.env.DEV 
-  ? 'http://localhost:3000' // 开发环境
-  : '' // 生产环境使用相对路径
+  ? 'http://localhost:3000' // Development environment
+  : '' // Production environment uses relative paths
 
 console.log('🔧 Stripe API Base URL:', API_BASE_URL)
 console.log('🌍 Environment:', import.meta.env.DEV ? 'development' : 'production')
 
-// 创建Stripe Checkout会话并重定向
+// Create Stripe Checkout session and redirect
 export async function createAndRedirectToCheckout(priceId, userId) {
   try {
     console.log('🛒 Creating checkout session...')
@@ -54,13 +54,13 @@ export async function createAndRedirectToCheckout(priceId, userId) {
     if (!response.ok) {
       const errorData = await response.json()
       console.error('❌ API Error:', errorData)
-      throw new Error(errorData.message || '创建支付会话失败')
+      throw new Error(errorData.message || 'Failed to create payment session')
     }
 
     const { sessionId } = await response.json()
     console.log('✅ Session created:', sessionId)
 
-    // 重定向到Stripe Checkout
+    // Redirect to Stripe Checkout
     const stripe = await getStripe()
     if (!stripe) {
       throw new Error('Failed to load Stripe')
@@ -77,13 +77,13 @@ export async function createAndRedirectToCheckout(priceId, userId) {
   }
 }
 
-// 获取Checkout会话详情
+// Get Checkout session details
 export async function getCheckoutSession(sessionId) {
   try {
     const response = await fetch(`${API_BASE_URL}/api/checkout-session?sessionId=${sessionId}`)
     
     if (!response.ok) {
-      throw new Error('获取支付会话失败')
+      throw new Error('Failed to get payment session')
     }
 
     return await response.json()
@@ -93,13 +93,13 @@ export async function getCheckoutSession(sessionId) {
   }
 }
 
-// 获取用户订阅信息
+// Get user subscription information
 export async function getCustomerSubscription(userId) {
   try {
     const response = await fetch(`${API_BASE_URL}/api/subscription?userId=${userId}`)
     
     if (!response.ok) {
-      throw new Error('获取订阅信息失败')
+      throw new Error('Failed to get subscription information')
     }
 
     return await response.json()
@@ -109,7 +109,7 @@ export async function getCustomerSubscription(userId) {
   }
 }
 
-// 创建客户门户会话并重定向
+// Create customer portal session and redirect
 export async function createCustomerPortalSession(customerId) {
   try {
     const response = await fetch(`${API_BASE_URL}/api/create-portal-session`, {
@@ -124,12 +124,12 @@ export async function createCustomerPortalSession(customerId) {
     })
 
     if (!response.ok) {
-      throw new Error('创建客户门户会话失败')
+      throw new Error('Failed to create customer portal session')
     }
 
     const { url } = await response.json()
     
-    // 重定向到客户门户
+    // Redirect to customer portal
     window.location.href = url
   } catch (error) {
     console.error('Portal session error:', error)
@@ -137,7 +137,7 @@ export async function createCustomerPortalSession(customerId) {
   }
 }
 
-// 取消订阅
+// Cancel subscription
 export async function cancelSubscription(subscriptionId) {
   try {
     const response = await fetch(`${API_BASE_URL}/api/cancel-subscription`, {
@@ -149,7 +149,7 @@ export async function cancelSubscription(subscriptionId) {
     })
 
     if (!response.ok) {
-      throw new Error('取消订阅失败')
+      throw new Error('Failed to cancel subscription')
     }
 
     return await response.json()
