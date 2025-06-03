@@ -20,12 +20,14 @@ const getStripe = () => {
 // Stripe payment services
 
 // Fixed API_BASE_URL configuration for production
-const API_BASE_URL = import.meta.env.DEV 
+const API_BASE_URL = import.meta.env.MODE === 'development' || import.meta.env.DEV 
   ? 'http://localhost:3000' // Development environment
   : '' // Production environment uses relative paths
 
 console.log('🔧 Stripe API Base URL:', API_BASE_URL)
-console.log('🌍 Environment:', import.meta.env.DEV ? 'development' : 'production')
+console.log('🌍 Environment MODE:', import.meta.env.MODE)
+console.log('🌍 Environment DEV:', import.meta.env.DEV)
+console.log('🌍 Environment PROD:', import.meta.env.PROD)
 
 // Create Stripe Checkout session and redirect
 export async function createAndRedirectToCheckout(priceId, userId) {

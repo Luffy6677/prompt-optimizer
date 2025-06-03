@@ -45,8 +45,8 @@ const PricingPage = ({ onAuthRequired }) => {
       name: 'Personal',
       description: 'Perfect for individuals and occasional use',
       price: {
-        monthly: 0.1,
-        yearly: 0.2
+        monthly: 1.99,
+        yearly: 19.99
       },
       features: [
         '10 prompt optimizations per month',
@@ -67,8 +67,8 @@ const PricingPage = ({ onAuthRequired }) => {
       name: 'Professional',
       description: 'Ideal for professionals and frequent users',
       price: {
-        monthly: 0.15,
-        yearly: 0.3
+        monthly: 9.99,
+        yearly: 99.99
       },
       features: [
         '100 prompt optimizations per month',
