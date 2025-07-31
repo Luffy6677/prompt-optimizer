@@ -13,8 +13,9 @@
 VITE_SUPABASE_URL=your_supabase_url
 VITE_SUPABASE_ANON_KEY=your_supabase_anon_key
 
-# DeepSeek API Configuration  
+# DeepSeek API Configuration
 DEEPSEEK_API_KEY=your_deepseek_api_key
+DEEPSEEK_MODEL=deepseek-chat
 DEEPSEEK_API_URL=https://api.deepseek.com
 
 # Server Configuration

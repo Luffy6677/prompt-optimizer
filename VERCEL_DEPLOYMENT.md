@@ -32,6 +32,7 @@ VITE_SUPABASE_ANON_KEY=your_supabase_anon_key
 
 # DeepSeek API Configuration (后端需要)
 DEEPSEEK_API_KEY=your_deepseek_api_key
+DEEPSEEK_MODEL=deepseek-chat
 DEEPSEEK_API_URL=https://api.deepseek.com
 
 # Stripe Configuration (如果启用支付)

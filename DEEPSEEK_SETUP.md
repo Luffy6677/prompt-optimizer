@@ -20,6 +20,7 @@
    在 `.env` 文件中设置您的 Deepseek API Key：
    ```
    DEEPSEEK_API_KEY=your_actual_deepseek_api_key_here
+   DEEPSEEK_MODEL=deepseek-chat
    ```
 
 ## 🔧 模型配置

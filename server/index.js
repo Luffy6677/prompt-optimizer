@@ -16,8 +16,10 @@ app.use(express.json())
 console.log('🔍 Debug: DEEPSEEK_API_KEY exists:', !!process.env.DEEPSEEK_API_KEY)
 console.log('🔍 Debug: DEEPSEEK_API_KEY value:', process.env.DEEPSEEK_API_KEY ? `${process.env.DEEPSEEK_API_KEY.substring(0, 6)}...` : 'null')
 
-const deepseek = process.env.DEEPSEEK_API_KEY && 
-                 process.env.DEEPSEEK_API_KEY !== 'your_deepseek_api_key_here' ? 
+const deepseekModel = process.env.DEEPSEEK_MODEL || 'deepseek-chat'
+
+const deepseek = process.env.DEEPSEEK_API_KEY &&
+                 process.env.DEEPSEEK_API_KEY !== 'your_deepseek_api_key_here' ?
   new OpenAI({
     apiKey: process.env.DEEPSEEK_API_KEY,
     baseURL: 'https://api.deepseek.com/v1',
@@ -84,7 +86,7 @@ async function optimizePromptWithAI(prompt, strategy) {
     console.log('🤖 Using Deepseek API')
     try {
       const response = await deepseek.chat.completions.create({
-        model: "deepseek-chat",
+        model: deepseekModel,
         messages: [
           {
             role: "system",
