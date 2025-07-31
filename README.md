@@ -44,10 +44,11 @@
    
    编辑 `.env` 文件，添加必要的配置：
    ```
-   PORT=3001
-   DEEPSEEK_API_KEY=your_deepseek_api_key_here          # 必需，用于AI功能
-   VITE_SUPABASE_URL=your_supabase_project_url          # 可选，用于用户认证
-   VITE_SUPABASE_ANON_KEY=your_supabase_anon_key        # 可选，用于用户认证
+  PORT=3001
+  DEEPSEEK_API_KEY=your_deepseek_api_key_here          # 必需，用于AI功能
+  DEEPSEEK_MODEL=deepseek-chat                         # 默认 DeepSeek 模型
+  VITE_SUPABASE_URL=your_supabase_project_url          # 可选，用于用户认证
+  VITE_SUPABASE_ANON_KEY=your_supabase_anon_key        # 可选，用于用户认证
    ```
    
    **注意**：如果不配置Supabase，应用仍可运行，但用户认证功能将被禁用。

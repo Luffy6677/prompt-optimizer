@@ -5,6 +5,8 @@ dotenv.config()
 
 console.log('=== Testing Deepseek API Connection ===')
 
+const deepseekModel = process.env.DEEPSEEK_MODEL || 'deepseek-chat'
+
 const deepseek = new OpenAI({
   apiKey: process.env.DEEPSEEK_API_KEY,
   baseURL: 'https://api.deepseek.com/v1',
@@ -16,7 +18,7 @@ async function testDeepseekAPI() {
     console.log('Sending test request to Deepseek API...')
     
     const response = await deepseek.chat.completions.create({
-      model: "deepseek-chat",
+      model: deepseekModel,
       messages: [
         {
           role: "system",
