@@ -1,237 +1,71 @@
-import React, { useState } from 'react'
-import { motion, AnimatePresence } from 'framer-motion'
-import { X, Mail, Lock, User, AlertCircle, CheckCircle } from 'lucide-react'
-import { useAuth } from '../contexts/AuthContext'
-
-const AuthModal = ({ isOpen, onClose }) => {
-  const [isLogin, setIsLogin] = useState(true)
-  const [email, setEmail] = useState('')
-  const [password, setPassword] = useState('')
-  const [confirmPassword, setConfirmPassword] = useState('')
-  const [error, setError] = useState('')
   const [success, setSuccess] = useState('')
   const [isLoading, setIsLoading] = useState(false)
 
-  const { signIn, signUp } = useAuth()
+  const { signIn, signUp, signInWithGoogle } = useAuth()
 
   const resetForm = () => {
     setEmail('')
-    setPassword('')
-    setConfirmPassword('')
-    setError('')
-    setSuccess('')
-    setIsLoading(false)
-  }
-
-  const handleClose = () => {
     resetForm()
-    onClose()
   }
 
-  const handleSubmit = async (e) => {
-    e.preventDefault()
+  const handleGoogleSignIn = async () => {
     setError('')
     setSuccess('')
     setIsLoading(true)
 
     try {
-      if (!email || !password) {
-        throw new Error('请填写所有必填字段')
-      }
-
-      if (!isLogin) {
-        // 注册逻辑
-        if (password !== confirmPassword) {
-          throw new Error('两次输入的密码不一致')
-        }
-        if (password.length < 6) {
-          throw new Error('密码长度至少需要6位')
-        }
-
-        const { user } = await signUp(email, password)
-        if (user && !user.email_confirmed_at) {
-          setSuccess('注册成功！请检查您的邮箱并确认账户。')
-        } else {
-          setSuccess('注册成功！')
-          setTimeout(() => {
-            handleClose()
-          }, 1500)
-        }
-      } else {
-        // 登录逻辑
-        await signIn(email, password)
-        setSuccess('登录成功！')
-        setTimeout(() => {
-          handleClose()
-        }, 1000)
-      }
+      await signInWithGoogle()
+      // Google OAuth will redirect, so we don't need to close the modal
     } catch (error) {
-      setError(error.message || '操作失败，请重试')
-    } finally {
+      setError(error.message || 'Google登录失败，请重试')
       setIsLoading(false)
     }
-  }
-
-  const toggleMode = () => {
-    setIsLogin(!isLogin)
-    resetForm()
   }
 
   if (!isOpen) return null
 
   return (
-    <AnimatePresence>
-      <div className="fixed inset-0 z-50 flex items-center justify-center">
-        {/* 遮罩层 */}
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          exit={{ opacity: 0 }}
-          className="absolute inset-0 bg-black/50 backdrop-blur-sm"
-          onClick={handleClose}
-        />
-        
-        {/* 弹窗内容 */}
-        <motion.div
-          initial={{ opacity: 0, scale: 0.95, y: 20 }}
-          animate={{ opacity: 1, scale: 1, y: 0 }}
-          exit={{ opacity: 0, scale: 0.95, y: 20 }}
-          className="relative w-full max-w-md mx-4 bg-white rounded-2xl shadow-2xl overflow-hidden"
-        >
-          {/* 关闭按钮 */}
-          <button
-            onClick={handleClose}
-            className="absolute top-4 right-4 p-2 text-gray-400 hover:text-gray-600 transition-colors z-10"
-          >
-            <X size={20} />
-          </button>
-
-          {/* 标题区域 */}
-          <div className="px-8 py-6 bg-gradient-to-r from-blue-500 to-purple-600 text-white">
-            <h2 className="text-2xl font-bold mb-2">
-              {isLogin ? '登录账户' : '注册账户'}
-            </h2>
-            <p className="text-blue-100 text-sm">
-              {isLogin ? '欢迎回来！继续您的提示词优化之旅' : '创建账户，开始您的提示词优化之旅'}
-            </p>
-          </div>
-
-          {/* 表单区域 */}
-          <form onSubmit={handleSubmit} className="px-8 py-6 space-y-4">
-            {/* 邮箱输入 */}
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                邮箱地址
-              </label>
-              <div className="relative">
-                <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={20} />
-                <input
-                  type="email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
-                  placeholder="输入您的邮箱"
-                  required
-                />
-              </div>
-            </div>
-
-            {/* 密码输入 */}
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                密码
-              </label>
-              <div className="relative">
-                <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={20} />
-                <input
-                  type="password"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
-                  placeholder={isLogin ? "输入您的密码" : "设置密码（至少6位）"}
-                  required
-                />
-              </div>
-            </div>
-
-            {/* 确认密码（仅注册时显示） */}
-            {!isLogin && (
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  确认密码
-                </label>
-                <div className="relative">
-                  <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={20} />
-                  <input
-                    type="password"
-                    value={confirmPassword}
-                    onChange={(e) => setConfirmPassword(e.target.value)}
-                    className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
-                    placeholder="再次输入密码"
-                    required
-                  />
-                </div>
-              </div>
-            )}
-
-            {/* 错误信息 */}
-            {error && (
-              <motion.div
-                initial={{ opacity: 0, y: -10 }}
-                animate={{ opacity: 1, y: 0 }}
-                className="flex items-center space-x-2 text-red-600 bg-red-50 p-3 rounded-lg"
-              >
-                <AlertCircle size={20} />
-                <span className="text-sm">{error}</span>
-              </motion.div>
-            )}
-
-            {/* 成功信息 */}
-            {success && (
-              <motion.div
-                initial={{ opacity: 0, y: -10 }}
-                animate={{ opacity: 1, y: 0 }}
-                className="flex items-center space-x-2 text-green-600 bg-green-50 p-3 rounded-lg"
-              >
-                <CheckCircle size={20} />
-                <span className="text-sm">{success}</span>
-              </motion.div>
-            )}
-
-            {/* 提交按钮 */}
-            <button
-              type="submit"
-              disabled={isLoading}
-              className="w-full bg-gradient-to-r from-blue-500 to-purple-600 text-white py-3 rounded-lg font-medium hover:from-blue-600 hover:to-purple-700 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-              {isLoading ? (
-                <div className="flex items-center justify-center space-x-2">
-                  <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                  <span>{isLogin ? '登录中...' : '注册中...'}</span>
-                </div>
-              ) : (
-                isLogin ? '登录' : '注册'
               )}
+            </button>
+
+            {/* 分隔线 */}
+            <div className="relative my-6">
+              <div className="absolute inset-0 flex items-center">
+                <div className="w-full border-t border-gray-300"></div>
+              </div>
+              <div className="relative flex justify-center text-sm">
+                <span className="px-2 bg-white text-gray-500">或</span>
+              </div>
+            </div>
+
+            {/* Google登录按钮 */}
+            <button
+              type="button"
+              onClick={handleGoogleSignIn}
+              disabled={isLoading}
+              className="w-full flex items-center justify-center space-x-3 py-3 border border-gray-300 rounded-lg hover:bg-gray-50 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              <svg className="w-5 h-5" viewBox="0 0 24 24">
+                <path
+                  fill="#4285F4"
+                  d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
+                />
+                <path
+                  fill="#34A853"
+                  d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"
+                />
+                <path
+                  fill="#FBBC05"
+                  d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"
+                />
+                <path
+                  fill="#EA4335"
+                  d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"
+                />
+              </svg>
+              <span className="text-gray-700 font-medium">使用 Google 账号{isLogin ? '登录' : '注册'}</span>
             </button>
 
             {/* 切换登录/注册模式 */}
             <div className="text-center pt-4">
               <span className="text-gray-600 text-sm">
-                {isLogin ? '还没有账户？' : '已有账户？'}
-              </span>
-              <button
-                type="button"
-                onClick={toggleMode}
-                className="ml-2 text-blue-600 hover:text-blue-700 font-medium text-sm transition-colors"
-              >
-                {isLogin ? '立即注册' : '立即登录'}
-              </button>
-            </div>
-          </form>
-        </motion.div>
-      </div>
-    </AnimatePresence>
-  )
-}
-
-export default AuthModal 
