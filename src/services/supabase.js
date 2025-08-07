@@ -1,62 +1,73 @@
-import { createClient } from '@supabase/supabase-js'
-
-const supabaseUrl = import.meta.env.VITE_SUPABASE_URL
-const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY
-
-if (!supabaseUrl || !supabaseAnonKey) {
-  console.warn('Supabase environment variables not found. Authentication features will be disabled.')
-}
-
-export const supabase = supabaseUrl && supabaseAnonKey ? 
-  createClient(supabaseUrl, supabaseAnonKey) : null
-
-// Auth helper functions
-export const auth = {
-  // Sign up with email and password
-  signUp: async (email, password) => {
-    if (!supabase) throw new Error('Supabase not configured')
-    
-    const { data, error } = await supabase.auth.signUp({
-      email,
-      password,
-    })
-    
-    if (error) throw error
-    return data
-  },
-
-  // Sign in with email and password  
-  signIn: async (email, password) => {
-    if (!supabase) throw new Error('Supabase not configured')
-    
-    const { data, error } = await supabase.auth.signInWithPassword({
-      email,
-      password,
-    })
-    
-    if (error) throw error
-    return data
-  },
-
-  // Sign out
-  signOut: async () => {
-    if (!supabase) throw new Error('Supabase not configured')
-    
-    const { error } = await supabase.auth.signOut()
-    if (error) throw error
-  },
-
-  // Get current user
-  getCurrentUser: () => {
-    if (!supabase) return null
-    return supabase.auth.getUser()
-  },
-
-  // Listen to auth changes
-  onAuthStateChange: (callback) => {
-    if (!supabase) return () => {}
     
     const { data: { subscription } } = supabase.auth.onAuthStateChange(callback)
     return () => subscription.unsubscribe()
+  },
+
+  // OAuth sign in
+  signInWithOAuth: async (provider, options = {}) => {
+    if (!supabase) throw new Error('Supabase not configured')
+    
+    const { data, error } = await supabase.auth.signInWithOAuth({
+      provider,
+      options: {
+        redirectTo: `${window.location.origin}/auth/callback`,
+        ...options
+      }
+    })
+    
+    if (error) throw error
+    return data
+  },
+
+  // Get OAuth sessions for current user
+  getOAuthSessions: async () => {
+    if (!supabase) throw new Error('Supabase not configured')
+    
+    const { data: { user } } = await supabase.auth.getUser()
+    if (!user) throw new Error('User not authenticated')
+    
+    const { data, error } = await supabase
+      .from('oauth_sessions')
+      .select('*')
+      .eq('user_id', user.id)
+      .order('created_at', { ascending: false })
+    
+    if (error) throw error
+    return data
+  },
+
+  // Unlink OAuth provider
+  unlinkOAuthProvider: async (provider) => {
+    if (!supabase) throw new Error('Supabase not configured')
+    
+    const { data: { user } } = await supabase.auth.getUser()
+    if (!user) throw new Error('User not authenticated')
+    
+    const { error } = await supabase
+      .from('oauth_sessions')
+      .delete()
+      .eq('user_id', user.id)
+      .eq('provider', provider)
+    
+    if (error) throw error
+    return true
+  },
+
+  // Check if provider is linked
+  isProviderLinked: async (provider) => {
+    if (!supabase) throw new Error('Supabase not configured')
+    
+    const { data: { user } } = await supabase.auth.getUser()
+    if (!user) return false
+    
+    const { data, error } = await supabase
+      .from('oauth_sessions')
+      .select('id')
+      .eq('user_id', user.id)
+      .eq('provider', provider)
+      .single()
+    
+    if (error && error.code !== 'PGRST116') throw error
+    return !!data
   }
 } 
