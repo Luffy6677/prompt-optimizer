@@ -1,72 +1,97 @@
-import React, { createContext, useContext, useEffect, useState } from 'react'
-import { auth } from '../services/supabase'
-
-const AuthContext = createContext({})
-
-export const useAuth = () => {
-  const context = useContext(AuthContext)
-  if (!context) {
-    throw new Error('useAuth must be used within an AuthProvider')
-  }
-  return context
-}
-
-export const AuthProvider = ({ children }) => {
-  const [user, setUser] = useState(null)
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    // Get initial session
-    auth.getCurrentUser()
-      .then(({ data: { user } }) => {
-        setUser(user)
-        setLoading(false)
+    // Check for JWT token first
+    const token = localStorage.getItem('auth_token')
+    if (token) {
+      fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:3001'}/api/auth/verify`, {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
       })
-      .catch((error) => {
-        console.warn('Auth initialization failed:', error)
-        setUser(null)
-        setLoading(false)
-      })
+        .then(response => {
+          if (response.ok) {
+            return response.json()
+          } else {
+            throw new Error('Invalid token')
+          }
+        })
+        .then(({ user }) => {
+          setUser(user)
+          setLoading(false)
+        })
+        .catch(() => {
+          localStorage.removeItem('auth_token')
+          setUser(null)
+          setLoading(false)
+        })
+    } else {
+      // Get initial session from Supabase
+      auth.getCurrentUser()
+        .then(({ data: { user } }) => {
+          setUser(user)
+          setLoading(false)
+        })
+        .catch((error) => {
+          console.warn('Auth initialization failed:', error)
+          setUser(null)
+          setLoading(false)
+        })
+    }
 
     // Listen for auth changes
     const unsubscribe = auth.onAuthStateChange((event, session) => {
-      setUser(session?.user ?? null)
-      setLoading(false)
-    })
-
-    return unsubscribe
-  }, [])
-
-  const signUp = async (email, password) => {
-    try {
-      setLoading(true)
-      const result = await auth.signUp(email, password)
-      return result
-    } catch (error) {
-      throw error
-    } finally {
-      setLoading(false)
-    }
-  }
-
-  const signIn = async (email, password) => {
-    try {
-      setLoading(true)
-      const result = await auth.signIn(email, password)
-      return result
-    } catch (error) {
-      throw error
-    } finally {
-      setLoading(false)
-    }
-  }
-
-  const signOut = async () => {
     try {
       setLoading(true)
       await auth.signOut()
+      // Also clear any JWT token
+      localStorage.removeItem('auth_token')
     } catch (error) {
       throw error
+    } finally {
+    }
+  }
+
+  const signInWithGoogle = async () => {
+    try {
+      setLoading(true)
+      // If using Supabase OAuth
+      if (auth.signInWithGoogle) {
+        const result = await auth.signInWithGoogle()
+        return result
+      } else {
+        // Fallback to direct server OAuth
+        window.location.href = `${import.meta.env.VITE_API_URL || 'http://localhost:3001'}/api/auth/google`
+      }
+    } catch (error) {
+      throw error
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  const handleAuthCallback = async (token) => {
+    try {
+      setLoading(true)
+      if (token) {
+        // Store JWT token
+        localStorage.setItem('auth_token', token)
+        // Verify and get user info
+        const response = await fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:3001'}/api/auth/verify`, {
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
+        })
+        if (response.ok) {
+          const { user } = await response.json()
+          setUser(user)
+        }
+      } else if (auth.handleOAuthCallback) {
+        // Handle Supabase OAuth callback
+        await auth.handleOAuthCallback()
+      }
+    } catch (error) {
+      console.error('Auth callback error:', error)
     } finally {
       setLoading(false)
     }
@@ -78,12 +103,7 @@ export const AuthProvider = ({ children }) => {
     signUp,
     signIn,
     signOut,
+    signInWithGoogle,
+    handleAuthCallback,
     isAuthenticated: !!user
   }
-
-  return (
-    <AuthContext.Provider value={value}>
-      {children}
-    </AuthContext.Provider>
-  )
-} 
