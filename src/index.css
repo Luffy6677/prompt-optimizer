@@ -6,21 +6,240 @@
   * {
     box-sizing: border-box;
   }
+  
+  html {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  }
+  
   body {
     font-feature-settings: "rlig" 1, "calt" 1;
     margin: 0;
     padding: 0;
+    background: linear-gradient(135deg, #0a0a0a 0%, #171717 50%, #0a0a0a 100%);
+    background-attachment: fixed;
+    color: #ffffff;
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+    min-height: 100vh;
+    font-weight: 400;
+  }
+  
+  /* Linear-style scrollbar */
+  ::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+  
+  ::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 3px;
+  }
+  
+  ::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 3px;
+    transition: background 0.2s ease;
+  }
+  
+  ::-webkit-scrollbar-thumb:hover {
+    background: rgba(255, 255, 255, 0.3);
+  }
+  
+  /* Selection styles */
+  ::selection {
+    background: rgba(59, 130, 246, 0.3);
+    color: #ffffff;
+  }
+  
+  ::-moz-selection {
+    background: rgba(59, 130, 246, 0.3);
+    color: #ffffff;
   }
 }
 
 @layer components {
-  .gradient-bg {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  /* Linear-style components */
+  .linear-card {
+    @apply bg-linear-gradient-card rounded-linear shadow-linear-md border border-border-primary transition-all duration-300 backdrop-blur-linear;
   }
   
+  .linear-card:hover {
+    @apply shadow-linear-lg border-border-secondary transform translate-y-[-1px];
+  }
+  
+  .linear-card-glass {
+    @apply bg-linear-gradient-glass backdrop-blur-linear border border-border-primary rounded-linear shadow-linear-lg;
+  }
+  
+  .linear-card-elevated {
+    @apply bg-surface-elevated backdrop-blur-linear border border-border-secondary rounded-linear shadow-linear-xl;
+  }
+  
+  .linear-button {
+    @apply inline-flex items-center justify-center px-linear-3xl py-linear-xl rounded-linear font-medium transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-background-primary text-linear-sm;
+  }
+  
+  .linear-button-primary {
+    @apply linear-button bg-linear-gradient-button text-white hover:bg-linear-gradient-button-hover focus:ring-linear-blue-500 shadow-linear-glow border border-transparent;
+  }
+  
+  .linear-button-primary:hover {
+    @apply shadow-linear-glow-purple transform translate-y-[-1px];
+  }
+  
+  .linear-button-secondary {
+    @apply linear-button bg-surface-secondary text-text-primary hover:bg-surface-tertiary focus:ring-linear-gray-500 border border-border-primary shadow-linear-sm;
+  }
+  
+  .linear-button-secondary:hover {
+    @apply border-border-secondary shadow-linear-md transform translate-y-[-1px];
+  }
+  
+  .linear-button-ghost {
+    @apply linear-button text-text-secondary hover:bg-surface-primary hover:text-text-primary focus:ring-linear-gray-500 border border-transparent;
+  }
+  
+  .linear-button-ghost:hover {
+    @apply transform translate-y-[-1px];
+  }
+  
+  .linear-button-success {
+    @apply linear-button bg-linear-gradient-success text-white hover:shadow-linear-glow focus:ring-linear-green-500;
+  }
+  
+  .linear-button-warning {
+    @apply linear-button bg-linear-gradient-warning text-white hover:shadow-linear-glow focus:ring-linear-orange-500;
+  }
+  
+  .linear-button-danger {
+    @apply linear-button bg-linear-gradient-danger text-white hover:shadow-linear-glow focus:ring-linear-red-500;
+  }
+  
+  .linear-input {
+    @apply w-full px-linear-3xl py-linear-xl bg-surface-primary border border-border-primary rounded-linear text-text-primary placeholder-text-muted focus:outline-none focus:ring-2 focus:ring-linear-blue-500 focus:border-border-accent transition-all duration-200 text-linear-base;
+  }
+  
+  .linear-input:focus {
+    @apply shadow-linear-glow bg-surface-secondary border-border-accent;
+  }
+  
+  .linear-input:hover {
+    @apply border-border-secondary;
+  }
+  
+  .linear-textarea {
+    @apply linear-input resize-none min-h-[140px] leading-relaxed;
+  }
+  
+  .linear-select {
+    @apply linear-input appearance-none bg-no-repeat bg-right bg-[length:16px_16px] pr-10;
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='m6 8 4 4 4-4'/%3e%3c/svg%3e");
+  }
+  
+  .linear-sidebar {
+    @apply bg-surface-primary/90 backdrop-blur-linear border-r border-white/10;
+  }
+  
+  .linear-content {
+    @apply bg-transparent;
+  }
+  
+  .linear-text-primary {
+    @apply text-text-primary;
+  }
+  
+  .linear-text-secondary {
+    @apply text-text-secondary;
+  }
+  
+  .linear-text-muted {
+    @apply text-text-muted;
+  }
+  
+  .linear-divider {
+    @apply border-t border-white/10;
+  }
+  
+  .linear-badge {
+    @apply inline-flex items-center px-linear-md py-linear-xs rounded-full text-linear-xs font-medium;
+  }
+  
+  .linear-badge-primary {
+    @apply linear-badge bg-linear-blue-500/20 text-linear-blue-400 border border-linear-blue-500/30;
+  }
+  
+  .linear-badge-success {
+    @apply linear-badge bg-linear-green-500/20 text-linear-green-400 border border-linear-green-500/30;
+  }
+  
+  .linear-badge-warning {
+    @apply linear-badge bg-linear-orange-500/20 text-linear-orange-400 border border-linear-orange-500/30;
+  }
+  
+  .linear-badge-danger {
+    @apply linear-badge bg-linear-red-500/20 text-linear-red-400 border border-linear-red-500/30;
+  }
+  
+  /* Glass morphism effect */
   .glass-effect {
-    background: rgba(255, 255, 255, 0.1);
-    backdrop-filter: blur(10px);
-    border: 1px solid rgba(255, 255, 255, 0.2);
+    @apply bg-white/5 backdrop-blur-linear border border-white/10;
+  }
+  
+  .glass-effect-strong {
+    @apply bg-white/10 backdrop-blur-linear-lg border border-white/20;
+  }
+  
+  /* Gradient backgrounds */
+  .gradient-bg {
+    @apply bg-linear-gradient;
+  }
+  
+  .gradient-card {
+    @apply bg-linear-gradient-card;
+  }
+  
+  .gradient-button {
+    @apply bg-linear-gradient-button;
+  }
+  
+  /* Linear-style animations */
+  .linear-fade-in {
+    @apply animate-linear-fade-in;
+  }
+  
+  .linear-slide-up {
+    @apply animate-linear-slide-up;
+  }
+  
+  .linear-scale {
+    @apply animate-linear-scale;
+  }
+  
+  .linear-pulse {
+    @apply animate-linear-pulse;
+  }
+  
+  .linear-glow {
+    @apply animate-linear-glow;
+  }
+  
+  /* Linear-style focus states */
+  .linear-focus {
+    @apply focus:outline-none focus:ring-2 focus:ring-linear-blue-500 focus:ring-offset-2 focus:ring-offset-background-primary;
+  }
+  
+  /* Hover effects */
+  .hover-lift {
+    @apply transition-transform duration-300 hover:transform hover:scale-105;
+  }
+  
+  .hover-glow {
+    @apply transition-shadow duration-300 hover:shadow-linear-glow;
+  }
+  
+  .hover-glow-purple {
+    @apply transition-shadow duration-300 hover:shadow-linear-glow-purple;
   }
 } 
