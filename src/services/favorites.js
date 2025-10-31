@@ -3,7 +3,7 @@ import { supabase } from './supabase'
 // 检查Supabase是否配置
 const checkSupabaseConfig = () => {
   if (!supabase) {
-    console.error('❌ Supabase未配置')
+    console.warn('⚠️ Supabase未配置，收藏功能不可用')
     return {
       isConfigured: false,
       error: 'Supabase未配置，收藏功能不可用。请配置Supabase以启用收藏功能。'

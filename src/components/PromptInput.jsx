@@ -39,44 +39,50 @@ const PromptInput = ({ value, onChange, onOptimize, isLoading, onLoginRequired }
   ]
 
   return (
-    <div className="space-y-4">
-      <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
-        <div className="bg-gray-50 px-4 py-3 border-b border-gray-200">
-          <div className="flex items-center gap-2">
-            <Type className="w-5 h-5 text-gray-600" />
-            <h3 className="font-medium text-gray-900">原始提示词</h3>
-            <span className="text-sm text-gray-500">({value.length} 字符)</span>
+    <div className="space-y-linear-4xl">
+      <div className="linear-card overflow-hidden">
+        <div className="bg-surface-secondary/50 px-linear-4xl py-linear-xl border-b border-border-primary backdrop-blur-linear">
+          <div className="flex items-center gap-linear-xl">
+            <Type className="w-5 h-5 text-text-muted" />
+            <h3 className="font-semibold text-text-primary text-linear-lg">原始提示词</h3>
+            <span className="linear-badge-primary text-linear-sm">({value.length} 字符)</span>
           </div>
         </div>
         
-        <div className="p-4 relative">
+        <div className="p-linear-4xl relative">
           <textarea
             value={value}
             onChange={(e) => isAuthenticated ? onChange(e.target.value) : null}
             onKeyDown={handleKeyDown}
             onClick={handleTextareaClick}
             placeholder={isAuthenticated ? "请输入您要优化的提示词..." : "请先登录后开始使用"}
-            className={`w-full h-40 p-4 border border-gray-300 rounded-lg resize-none transition-all duration-200 ${
+            className={`linear-textarea h-48 ${
               isAuthenticated 
-                ? 'focus:ring-2 focus:ring-blue-500 focus:border-transparent' 
-                : 'cursor-pointer bg-gray-50'
+                ? 'linear-focus' 
+                : 'cursor-pointer bg-surface-secondary/30'
             }`}
             disabled={isLoading || !isAuthenticated}
             readOnly={!isAuthenticated}
           />
           
           {!isAuthenticated && (
-            <div className="absolute inset-0 flex items-center justify-center bg-gray-50/80 rounded-lg backdrop-blur-sm">
+            <div className="absolute inset-0 flex items-center justify-center bg-linear-gradient-glass rounded-linear backdrop-blur-linear-lg">
               <div className="text-center">
-                <Lock className="w-8 h-8 text-gray-400 mx-auto mb-2" />
-                <p className="text-gray-600 font-medium">请先登录使用</p>
-                <p className="text-sm text-gray-500">登录后即可开始优化您的提示词</p>
+                <div className="relative mb-linear-xl">
+                  <Lock className="w-10 h-10 text-text-muted mx-auto animate-linear-pulse" />
+                  <div className="absolute inset-0 w-10 h-10 bg-linear-blue-500/20 rounded-full blur-lg animate-linear-glow mx-auto"></div>
+                </div>
+                <p className="text-text-secondary font-semibold text-linear-lg mb-linear-lg">请先登录使用</p>
+                <p className="text-linear-base text-text-muted">登录后即可开始优化您的提示词</p>
               </div>
             </div>
           )}
           
-          <div className="mt-3 text-sm text-gray-500">
-            <p>💡 提示：{isAuthenticated ? '按 Ctrl/Cmd + Enter 快速开始优化' : '登录后解锁所有功能'}</p>
+          <div className="mt-linear-xl text-linear-base text-text-muted">
+            <p className="flex items-center gap-linear-lg">
+              <span className="text-linear-blue-400">💡</span>
+              提示：{isAuthenticated ? '按 Ctrl/Cmd + Enter 快速开始优化' : '登录后解锁所有功能'}
+            </p>
           </div>
         </div>
       </div>
@@ -86,21 +92,21 @@ const PromptInput = ({ value, onChange, onOptimize, isLoading, onLoginRequired }
         initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.3 }}
-        className="bg-blue-50 rounded-lg p-4"
+        className="linear-card-glass p-linear-4xl"
       >
-        <h4 className="font-medium text-blue-900 mb-3 flex items-center gap-2">
-          <FileText className="w-4 h-4" />
+        <h4 className="font-semibold text-linear-blue-400 mb-linear-4xl flex items-center gap-linear-xl text-linear-lg">
+          <FileText className="w-6 h-6" />
           示例提示词
         </h4>
-        <div className="grid gap-2">
+        <div className="grid gap-linear-lg">
           {examplePrompts.map((prompt, index) => (
             <button
               key={index}
               onClick={() => handleExampleClick(prompt)}
-              className={`text-left text-sm transition-colors p-2 rounded ${
+              className={`text-left text-linear-base transition-all duration-200 p-linear-xl rounded-linear border border-transparent ${
                 isAuthenticated
-                  ? 'text-blue-700 hover:text-blue-900 hover:bg-blue-100'
-                  : 'text-gray-500 cursor-pointer hover:bg-gray-100'
+                  ? 'text-linear-blue-400 hover:text-linear-blue-300 hover:bg-linear-blue-500/10 hover:border-linear-blue-500/30 hover:shadow-linear-glow hover:translate-y-[-1px]'
+                  : 'text-text-muted cursor-pointer hover:bg-surface-secondary hover:border-border-primary'
               }`}
               disabled={isLoading}
             >
@@ -110,9 +116,9 @@ const PromptInput = ({ value, onChange, onOptimize, isLoading, onLoginRequired }
         </div>
         
         {!isAuthenticated && (
-          <div className="mt-3 text-center">
-            <p className="text-sm text-gray-600">
-              <Lock className="w-4 h-4 inline mr-1" />
+          <div className="mt-linear-4xl text-center">
+            <p className="text-linear-base text-text-muted flex items-center justify-center gap-linear-lg">
+              <Lock className="w-5 h-5" />
               登录后可使用示例提示词
             </p>
           </div>

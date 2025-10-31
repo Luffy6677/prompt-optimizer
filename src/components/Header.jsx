@@ -64,115 +64,137 @@ const Header = ({ activeTab = 'home', onTabChange }) => {
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.6 }}
-        className="bg-white/95 backdrop-blur-sm border-b border-gray-200 sticky top-0 z-50 shadow-sm"
+        className="bg-surface-primary/90 border-b border-border-primary sticky top-0 z-50 backdrop-blur-linear-lg"
       >
-        <div className="container mx-auto px-4">
-          <div className="flex items-center justify-between h-16">
-            <div className="flex items-center gap-3">
+        <div className="max-w-7xl mx-auto px-linear-6xl">
+          <div className="flex items-center justify-between h-20">
+            <div className="flex items-center gap-linear-xl">
               <button
                 onClick={() => handleTabClick('home')}
-                className="flex items-center gap-3 hover:opacity-80 transition-opacity"
+                className="flex items-center gap-linear-xl hover:bg-surface-secondary rounded-linear p-linear-lg transition-all duration-200 group"
               >
-                <div className="w-10 h-10 bg-gradient-to-br from-blue-600 to-purple-600 rounded-lg flex items-center justify-center">
-                  <Brain className="w-6 h-6 text-white" />
-                </div>
+                <motion.div 
+                  className="relative w-12 h-12 bg-linear-gradient-button rounded-linear flex items-center justify-center shadow-linear-glow overflow-hidden"
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                  transition={{ type: "spring", stiffness: 400, damping: 17 }}
+                >
+                  {/* 背景光晕效果 */}
+                  <div className="absolute inset-0 bg-gradient-to-br from-white/20 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                  
+                  {/* 图标 */}
+                  <motion.div
+                    animate={{ 
+                      rotate: [0, 5, -5, 0],
+                    }}
+                    transition={{
+                      duration: 3,
+                      repeat: Infinity,
+                      repeatType: "reverse",
+                      ease: "easeInOut"
+                    }}
+                  >
+                    <Brain className="w-7 h-7 text-white relative z-10 drop-shadow-lg" strokeWidth={2.5} />
+                  </motion.div>
+                  
+                  {/* 外围光晕 */}
+                  <div className="absolute inset-0 rounded-linear bg-gradient-to-r from-linear-blue-400/0 via-linear-purple-400/30 to-linear-blue-400/0 opacity-0 group-hover:opacity-100 blur-sm transition-opacity duration-300 -z-10"></div>
+                </motion.div>
                 <div>
-                  <h1 className="text-xl font-bold text-gray-900">Prompt Optimizer</h1>
-                  <p className="text-sm text-gray-500 hidden md:block">AI驱动的提示词优化工具</p>
+                  <h1 className="text-linear-xl font-semibold text-text-primary">Prompt Optimizer</h1>
                 </div>
               </button>
             </div>
             
-            <nav className="hidden md:flex items-center gap-8">
+            <nav className="hidden md:flex items-center gap-linear-xl">
               <button
                 onClick={() => handleTabClick('pricing')}
-                className={`flex items-center gap-2 transition-colors ${
+                className={`linear-button-ghost ${
                   activeTab === 'pricing' 
-                    ? 'text-blue-600' 
-                    : 'text-gray-600 hover:text-blue-600'
+                    ? 'bg-surface-secondary text-text-primary shadow-linear-glow' 
+                    : 'text-text-secondary'
                 }`}
               >
-                <DollarSign className="w-4 h-4" />
+                <DollarSign className="w-4 h-4 mr-linear-lg" />
                 Pricing
               </button>
-              <a href="#documentation" className="flex items-center gap-2 text-gray-600 hover:text-blue-600 transition-colors">
-                <FileText className="w-4 h-4" />
+              <a href="#documentation" className="linear-button-ghost text-text-secondary">
+                <FileText className="w-4 h-4 mr-linear-lg" />
                 Documentation
               </a>
               
               <button
                 onClick={() => handleTabClick('favorites')}
-                className={`flex items-center gap-2 transition-colors ${
+                className={`linear-button-ghost ${
                   activeTab === 'favorites' 
-                    ? 'text-blue-600' 
-                    : 'text-gray-600 hover:text-blue-600'
+                    ? 'bg-surface-secondary text-text-primary shadow-linear-glow' 
+                    : 'text-text-secondary'
                 }`}
               >
-                <Heart className={`w-4 h-4 ${activeTab === 'favorites' ? 'fill-current' : ''}`} />
+                <Heart className={`w-4 h-4 mr-linear-lg ${activeTab === 'favorites' ? 'fill-current text-linear-red-400' : ''}`} />
                 收藏
                 {!isAuthenticated && (
-                  <span className="text-xs bg-yellow-100 text-yellow-800 px-1.5 py-0.5 rounded">需登录</span>
+                  <span className="linear-badge-warning text-linear-xs ml-linear-lg">需登录</span>
                 )}
                 {isAuthenticated && !favoritesAvailable && (
-                  <span className="text-xs bg-gray-100 text-gray-600 px-1.5 py-0.5 rounded">未配置</span>
+                  <span className="linear-badge text-linear-xs bg-surface-secondary text-text-muted border-border-primary ml-linear-lg">未配置</span>
                 )}
               </button>
             </nav>
             
-            <div className="flex items-center gap-3">
+            <div className="flex items-center gap-linear-xl">
               {isAuthenticated ? (
                 <div className="relative">
                   <button
                     onClick={handleAuthClick}
-                    className="flex items-center gap-3 px-4 py-2 bg-gray-100 hover:bg-gray-200 rounded-lg transition-colors"
+                    className="flex items-center gap-linear-xl px-linear-xl py-linear-lg hover:bg-surface-secondary rounded-linear transition-all duration-200"
                   >
-                    <div className="w-8 h-8 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center text-white text-sm font-medium">
+                    <div className="w-9 h-9 bg-linear-gradient-button rounded-full flex items-center justify-center text-white text-linear-base font-semibold shadow-linear-glow">
                       {getUserInitials()}
                     </div>
                     <div className="hidden md:block text-left">
-                      <div className="text-sm font-medium text-gray-900 truncate max-w-32">
+                      <div className="text-linear-base font-medium text-text-primary truncate max-w-32">
                         {getUserEmail()}
                       </div>
-                      <div className="text-xs text-gray-500">已登录</div>
                     </div>
-                    <ChevronDown className="w-4 h-4 text-gray-500" />
+                    <ChevronDown className="w-4 h-4 text-text-muted transition-transform duration-200" />
                   </button>
 
                   {/* 用户菜单下拉 */}
                   {isUserMenuOpen && (
                     <motion.div
-                      initial={{ opacity: 0, y: 10 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      exit={{ opacity: 0, y: 10 }}
-                      className="absolute right-0 top-full mt-2 w-56 bg-white rounded-lg shadow-lg border border-gray-200 py-2 z-60"
+                      initial={{ opacity: 0, y: 10, scale: 0.95 }}
+                      animate={{ opacity: 1, y: 0, scale: 1 }}
+                      exit={{ opacity: 0, y: 10, scale: 0.95 }}
+                      className="absolute right-0 top-full mt-linear-lg w-72 linear-card-elevated py-linear-xl z-60"
                     >
-                      <div className="px-4 py-3 border-b border-gray-100">
-                        <div className="text-sm font-medium text-gray-900">{getUserEmail()}</div>
-                        <div className="text-xs text-gray-500">个人账户</div>
+                      <div className="px-linear-4xl py-linear-xl border-b border-border-primary">
+                        <div className="text-linear-base font-medium text-text-primary">{getUserEmail()}</div>
+                        <div className="text-linear-sm text-text-muted">个人账户</div>
                       </div>
                       
-                      <div className="py-1">
+                      <div className="py-linear-lg">
                         <button
                           onClick={() => {
                             handleTabClick('favorites')
                             setIsUserMenuOpen(false)
                           }}
-                          className="w-full flex items-center gap-3 px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 transition-colors"
+                          className="w-full flex items-center gap-linear-xl px-linear-4xl py-linear-xl text-linear-base text-text-secondary hover:bg-surface-secondary hover:text-text-primary transition-all duration-200"
                         >
-                          <Heart className="w-4 h-4" />
+                          <Heart className="w-5 h-5" />
                           我的收藏
                         </button>
                         
-                        <button className="w-full flex items-center gap-3 px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 transition-colors">
-                          <User className="w-4 h-4" />
+                        <button className="w-full flex items-center gap-linear-xl px-linear-4xl py-linear-xl text-linear-base text-text-secondary hover:bg-surface-secondary hover:text-text-primary transition-all duration-200">
+                          <User className="w-5 h-5" />
                           个人设置
                         </button>
                         
                         <button
                           onClick={handleSignOut}
-                          className="w-full flex items-center gap-3 px-4 py-2 text-sm text-red-600 hover:bg-red-50 transition-colors"
+                          className="w-full flex items-center gap-linear-xl px-linear-4xl py-linear-xl text-linear-base text-linear-red-400 hover:bg-linear-red-500/10 transition-all duration-200"
                         >
-                          <LogOut className="w-4 h-4" />
+                          <LogOut className="w-5 h-5" />
                           退出登录
                         </button>
                       </div>
@@ -183,9 +205,9 @@ const Header = ({ activeTab = 'home', onTabChange }) => {
                 <button
                   onClick={handleAuthClick}
                   disabled={loading}
-                  className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-50"
+                  className="linear-button-primary"
                 >
-                  <LogIn className="w-4 h-4" />
+                  <LogIn className="w-5 h-5 mr-linear-lg" />
                   <span>{loading ? '加载中...' : 'Login'}</span>
                 </button>
               )}

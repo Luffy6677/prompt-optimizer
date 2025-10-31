@@ -95,129 +95,134 @@ function AppContent() {
   const renderHomeContent = () => (
     <>
       {/* Hero Section with Slogan */}
-      <section className="container mx-auto px-4 py-16">
+      <section className="max-w-7xl mx-auto px-linear-6xl py-linear-8xl">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}
-          className="text-center mb-16"
+          className="text-center mb-linear-8xl"
         >
           <motion.h1
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.2, duration: 0.6 }}
-            className="text-4xl md:text-6xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent mb-6"
+            className="text-linear-5xl font-bold text-text-primary mb-linear-4xl bg-gradient-to-r from-linear-blue-400 via-linear-purple-400 to-linear-blue-500 bg-clip-text text-transparent"
           >
-            AI提示词优化器
+            AI 提示词优化器
           </motion.h1>
           <motion.p
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.4, duration: 0.6 }}
-            className="text-xl text-gray-600 max-w-3xl mx-auto"
+            className="text-linear-xl text-text-secondary max-w-2xl mx-auto leading-relaxed"
           >
-            利用先进的AI技术，让您的提示词更加精准、清晰、有效
+            利用先进的 AI 技术，让您的提示词更加精准、清晰、有效
           </motion.p>
         </motion.div>
 
         {/* Core Section - Input and Results */}
-        <div className="max-w-6xl mx-auto">
-          <div className="grid lg:grid-cols-2 gap-8">
-            {/* Input Section - 强调用户输入 */}
-            <motion.div
-              initial={{ opacity: 0, x: -20 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ delay: 0.6, duration: 0.6 }}
-              className="space-y-6"
-            >
-              <div className="bg-white rounded-xl shadow-lg p-6 border border-gray-100">
-                <h2 className="text-2xl font-bold text-gray-900 mb-4 flex items-center gap-3">
-                  <div className="w-8 h-8 bg-blue-100 rounded-lg flex items-center justify-center">
-                    <span className="text-blue-600 font-bold">1</span>
-                  </div>
+        <div className="grid lg:grid-cols-2 gap-linear-6xl">
+          {/* Input Section */}
+          <motion.div
+            initial={{ opacity: 0, x: -20 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ delay: 0.6, duration: 0.6 }}
+            className="space-y-linear-4xl"
+          >
+            <div className="linear-card p-linear-5xl hover-lift">
+              <div className="flex items-center gap-linear-xl mb-linear-4xl">
+                <div className="w-10 h-10 bg-linear-gradient-button rounded-linear flex items-center justify-center shadow-linear-glow">
+                  <span className="text-white font-semibold text-linear-base">1</span>
+                </div>
+                <h2 className="text-linear-2xl font-semibold text-text-primary">
                   输入您的提示词
                 </h2>
-                
-                <PromptInput
-                  value={originalPrompt}
-                  onChange={setOriginalPrompt}
-                  onOptimize={handleOptimize}
-                  isLoading={isLoading}
-                  onLoginRequired={handleLoginRequired}
-                />
-                
-                {error && (
-                  <motion.div
-                    initial={{ opacity: 0, scale: 0.9 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    className="mt-4 bg-red-50 border border-red-200 rounded-lg p-4"
-                  >
-                    <p className="text-red-600">{error}</p>
-                  </motion.div>
-                )}
-
-                <div className="flex gap-3 mt-6">
-                  <button
-                    onClick={handleOptimize}
-                    disabled={isLoading || !originalPrompt.trim()}
-                    className="flex-1 bg-gradient-to-r from-blue-600 to-purple-600 text-white px-6 py-3 rounded-lg font-medium hover:from-blue-700 hover:to-purple-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 flex items-center justify-center gap-2"
-                  >
-                    {isLoading ? (
-                      <RefreshCw className="w-5 h-5 animate-spin" />
-                    ) : (
-                      <Send className="w-5 h-5" />
-                    )}
-                    {isLoading ? '优化中...' : '开始优化'}
-                  </button>
-                  
-                  <button
-                    onClick={handleClearAll}
-                    className="px-6 py-3 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors duration-200"
-                  >
-                    清空
-                  </button>
-                </div>
               </div>
-            </motion.div>
+              
+              <PromptInput
+                value={originalPrompt}
+                onChange={setOriginalPrompt}
+                onOptimize={handleOptimize}
+                isLoading={isLoading}
+                onLoginRequired={handleLoginRequired}
+              />
+              
+              {error && (
+                <motion.div
+                  initial={{ opacity: 0, scale: 0.9 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  className="mt-linear-4xl bg-linear-red-500/10 border border-linear-red-500/30 rounded-linear p-linear-3xl backdrop-blur-linear"
+                >
+                  <p className="text-linear-red-400 text-linear-base">{error}</p>
+                </motion.div>
+              )}
 
-            {/* Results Section */}
-            <motion.div
-              initial={{ opacity: 0, x: 20 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ delay: 0.8, duration: 0.6 }}
-              className="space-y-6"
-            >
-              <div className="bg-white rounded-xl shadow-lg p-6 border border-gray-100 min-h-[500px]">
-                <h2 className="text-2xl font-bold text-gray-900 mb-4 flex items-center gap-3">
-                  <div className="w-8 h-8 bg-purple-100 rounded-lg flex items-center justify-center">
-                    <span className="text-purple-600 font-bold">2</span>
-                  </div>
+              <div className="flex gap-linear-xl mt-linear-4xl">
+                <button
+                  onClick={handleOptimize}
+                  disabled={isLoading || !originalPrompt.trim()}
+                  className="linear-button-primary flex-1"
+                >
+                  {isLoading ? (
+                    <RefreshCw className="w-5 h-5 animate-spin mr-linear-lg" />
+                  ) : (
+                    <Send className="w-5 h-5 mr-linear-lg" />
+                  )}
+                  {isLoading ? '优化中...' : '开始优化'}
+                </button>
+                
+                <button
+                  onClick={handleClearAll}
+                  className="linear-button-secondary"
+                >
+                  清空
+                </button>
+              </div>
+            </div>
+          </motion.div>
+
+          {/* Results Section */}
+          <motion.div
+            initial={{ opacity: 0, x: 20 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ delay: 0.8, duration: 0.6 }}
+            className="space-y-linear-4xl"
+          >
+            <div className="linear-card p-linear-5xl min-h-[700px] hover-lift">
+              <div className="flex items-center gap-linear-xl mb-linear-4xl">
+                <div className="w-10 h-10 bg-linear-gradient-success rounded-linear flex items-center justify-center shadow-linear-glow-green">
+                  <span className="text-white font-semibold text-linear-base">2</span>
+                </div>
+                <h2 className="text-linear-2xl font-semibold text-text-primary">
                   优化结果
                 </h2>
-                
-                {isLoading ? (
-                  <LoadingAnimation />
-                ) : optimizedResults ? (
-                  <OptimizationResults 
-                    results={optimizedResults}
-                    originalPrompt={originalPrompt}
-                    strategy={selectedStrategy}
-                    onLoginRequired={handleLoginRequired}
-                  />
-                ) : (
-                  <div className="flex flex-col items-center justify-center h-96 text-center">
-                    <Sparkles className="w-16 h-16 text-gray-400 mb-4" />
-                    <h3 className="text-lg font-medium text-gray-600 mb-2">
-                      等待优化结果
-                    </h3>
-                    <p className="text-gray-500">
-                      {isAuthenticated ? '输入您的提示词并点击"开始优化"按钮' : '请先登录后开始使用'}
-                    </p>
-                  </div>
-                )}
               </div>
-            </motion.div>
-          </div>
+              
+              {isLoading ? (
+                <LoadingAnimation />
+              ) : optimizedResults ? (
+                <OptimizationResults 
+                  results={optimizedResults}
+                  originalPrompt={originalPrompt}
+                  strategy={selectedStrategy}
+                  onLoginRequired={handleLoginRequired}
+                />
+              ) : (
+                <div className="flex flex-col items-center justify-center h-96 text-center">
+                  <div className="relative mb-linear-4xl">
+                    <Sparkles className="w-20 h-20 text-text-muted animate-linear-pulse" />
+                    <div className="absolute inset-0 w-20 h-20 bg-linear-blue-500/20 rounded-full blur-xl animate-linear-glow mx-auto"></div>
+                  </div>
+                  <h3 className="text-linear-xl font-medium text-text-secondary mb-linear-xl">
+                    等待优化结果
+                  </h3>
+                  <p className="text-text-muted text-linear-base max-w-sm leading-relaxed">
+                    {isAuthenticated ? '输入您的提示词并点击"开始优化"按钮' : '请先登录后开始使用'}
+                  </p>
+                </div>
+              )}
+            </div>
+          </motion.div>
         </div>
       </section>
 
@@ -227,31 +232,40 @@ function AppContent() {
   )
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50">
-      <Header activeTab={activeTab} onTabChange={handleTabChange} />
+    <div className="min-h-screen bg-linear-gradient font-linear relative overflow-hidden">
+      {/* Background decoration */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+        <div className="absolute top-1/3 left-1/4 w-[500px] h-[500px] bg-linear-blue-500/8 rounded-full blur-3xl animate-linear-pulse"></div>
+        <div className="absolute bottom-1/3 right-1/4 w-[400px] h-[400px] bg-linear-purple-500/8 rounded-full blur-3xl animate-linear-pulse" style={{ animationDelay: '1s' }}></div>
+        <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[300px] h-[300px] bg-linear-blue-400/5 rounded-full blur-2xl animate-linear-pulse" style={{ animationDelay: '2s' }}></div>
+      </div>
       
-      <main>
-        {activeTab === 'home' && renderHomeContent()}
-        {activeTab === 'favorites' && (
-          <FavoritesPage 
-            onLoginRequired={handleLoginRequired} 
-            onTabChange={handleTabChange}
-          />
-        )}
-        {activeTab === 'pricing' && (
-          <PricingPage 
-            onAuthRequired={handleLoginRequired}
-          />
-        )}
-      </main>
+      <div className="relative z-10">
+        <Header activeTab={activeTab} onTabChange={handleTabChange} />
+        
+        <main className="linear-content">
+          {activeTab === 'home' && renderHomeContent()}
+          {activeTab === 'favorites' && (
+            <FavoritesPage 
+              onLoginRequired={handleLoginRequired} 
+              onTabChange={handleTabChange}
+            />
+          )}
+          {activeTab === 'pricing' && (
+            <PricingPage 
+              onAuthRequired={handleLoginRequired}
+            />
+          )}
+        </main>
 
-      <Footer />
+        <Footer />
 
-      {/* 登录弹窗 */}
-      <AuthModal
-        isOpen={isAuthModalOpen}
-        onClose={() => setIsAuthModalOpen(false)}
-      />
+        {/* 登录弹窗 */}
+        <AuthModal
+          isOpen={isAuthModalOpen}
+          onClose={() => setIsAuthModalOpen(false)}
+        />
+      </div>
     </div>
   )
 }
