@@ -164,9 +164,9 @@ const OptimizationResults = ({ results, originalPrompt, strategy, onLoginRequire
   }
 
   const getScoreColor = (score) => {
-    if (score >= 8) return 'text-green-600 bg-green-100'
-    if (score >= 6) return 'text-yellow-600 bg-yellow-100'
-    return 'text-red-600 bg-red-100'
+    if (score >= 8) return 'text-linear-green-400 bg-linear-green-500/20 border-linear-green-500/30'
+    if (score >= 6) return 'text-linear-orange-400 bg-linear-orange-500/20 border-linear-orange-500/30'
+    return 'text-linear-red-400 bg-linear-red-500/20 border-linear-red-500/30'
   }
 
   const getScoreLabel = (score) => {
@@ -193,16 +193,16 @@ const OptimizationResults = ({ results, originalPrompt, strategy, onLoginRequire
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5 }}
-      className="space-y-6"
+      className="space-y-linear-3xl"
     >
       {/* Optimized Prompt */}
-      <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
-        <div className="bg-gradient-to-r from-green-50 to-blue-50 px-4 py-3 border-b border-gray-200">
+      <div className="linear-card overflow-hidden hover-lift">
+        <div className="bg-linear-green-500/10 px-linear-2xl py-linear-lg border-b border-linear-green-500/20 backdrop-blur-linear">
           <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2">
-              <Sparkles className="w-5 h-5 text-green-600" />
-              <h3 className="font-medium text-gray-900">优化后的提示词</h3>
-              <span className="px-2 py-1 bg-green-100 text-green-800 text-xs rounded-full">
+            <div className="flex items-center gap-linear-lg">
+              <Sparkles className="w-5 h-5 text-linear-green-400 animate-linear-pulse" />
+              <h3 className="font-semibold linear-text-primary text-linear-base">优化后的提示词</h3>
+              <span className="linear-badge-success text-linear-xs">
                 已优化
               </span>
             </div>
@@ -212,44 +212,44 @@ const OptimizationResults = ({ results, originalPrompt, strategy, onLoginRequire
               <button
                 onClick={handleFavoriteClick}
                 disabled={isAddingToFavorites}
-                className={`flex items-center gap-1 px-3 py-1.5 rounded-lg text-sm font-medium transition-all ${
+                className={`linear-button-ghost text-linear-xs hover-lift ${
                   isFavorited
-                    ? 'bg-red-100 text-red-600 hover:bg-red-200'
-                    : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                    ? 'bg-linear-red-500/10 text-linear-red-400 hover:bg-linear-red-500/20 border border-linear-red-500/30'
+                    : 'linear-text-secondary hover:bg-white/10'
                 } ${isAddingToFavorites ? 'opacity-50 cursor-not-allowed' : ''}`}
               >
                 {isAddingToFavorites ? (
                   <>
-                    <div className="w-4 h-4 border-2 border-current border-t-transparent rounded-full animate-spin"></div>
+                    <div className="w-4 h-4 border-2 border-current border-t-transparent rounded-full animate-spin mr-linear-sm"></div>
                     处理中...
                   </>
                 ) : isFavorited ? (
                   <>
-                    <Heart className="w-4 h-4 fill-current" />
+                    <Heart className="w-4 h-4 fill-current mr-linear-sm" />
                     已收藏
                   </>
                 ) : (
                   <>
-                    <Heart className="w-4 h-4" />
+                    <Heart className="w-4 h-4 mr-linear-sm" />
                     收藏
                   </>
                 )}
               </button>
             ) : (
               <div 
-                className="flex items-center gap-1 px-3 py-1.5 rounded-lg text-sm font-medium bg-gray-50 text-gray-400 cursor-not-allowed"
+                className="linear-button-ghost text-linear-xs linear-text-muted cursor-not-allowed"
                 title="收藏功能未配置，请配置 Supabase 以启用"
               >
-                <Heart className="w-4 h-4" />
+                <Heart className="w-4 h-4 mr-linear-sm" />
                 收藏
               </div>
             )}
           </div>
         </div>
         
-        <div className="p-4">
-          <div className="bg-gray-50 rounded-lg p-4 mb-4">
-            <p className="text-gray-800 leading-relaxed">{results.optimizedPrompt}</p>
+        <div className="p-linear-2xl">
+          <div className="bg-surface-secondary/50 rounded-linear p-linear-2xl mb-linear-2xl backdrop-blur-linear border border-white/10">
+            <p className="linear-text-primary leading-relaxed text-linear-base">{results.optimizedPrompt}</p>
           </div>
           
           {/* 收藏标题输入 */}
@@ -257,9 +257,9 @@ const OptimizationResults = ({ results, originalPrompt, strategy, onLoginRequire
             <motion.div
               initial={{ opacity: 0, y: -10 }}
               animate={{ opacity: 1, y: 0 }}
-              className="mb-4 p-4 bg-blue-50 rounded-lg border border-blue-200"
+              className="mb-linear-2xl p-linear-2xl linear-card-glass border border-linear-blue-500/30 animate-linear-fade-in"
             >
-              <label className="block text-sm font-medium text-blue-900 mb-2">
+              <label className="block text-linear-sm font-semibold text-linear-blue-400 mb-linear-lg">
                 收藏标题
               </label>
               <input
@@ -267,20 +267,20 @@ const OptimizationResults = ({ results, originalPrompt, strategy, onLoginRequire
                 value={favoriteTitle}
                 onChange={(e) => setFavoriteTitle(e.target.value)}
                 placeholder="为这个优化结果命名..."
-                className="w-full px-3 py-2 border border-blue-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm"
+                className="linear-input text-linear-sm"
                 maxLength={100}
               />
-              <div className="flex gap-2 mt-3">
+              <div className="flex gap-linear-lg mt-linear-lg">
                 <button
                   onClick={handleAddToFavorites}
                   disabled={isAddingToFavorites}
-                  className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors text-sm disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="linear-button-primary text-linear-sm hover-glow-purple"
                 >
                   {isAddingToFavorites ? '添加中...' : '确认收藏'}
                 </button>
                 <button
                   onClick={handleCancelAddFavorite}
-                  className="px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors text-sm"
+                  className="linear-button-secondary text-linear-sm hover-lift"
                 >
                   取消
                 </button>
@@ -290,16 +290,16 @@ const OptimizationResults = ({ results, originalPrompt, strategy, onLoginRequire
           
           <button
             onClick={() => copyToClipboard(results.optimizedPrompt, 'main')}
-            className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+            className="linear-button-primary text-linear-sm hover-glow-purple"
           >
             {copiedIndex === 'main' ? (
               <>
-                <Check className="w-4 h-4" />
+                <Check className="w-5 h-5 mr-linear-lg" />
                 已复制
               </>
             ) : (
               <>
-                <Copy className="w-4 h-4" />
+                <Copy className="w-5 h-5 mr-linear-lg" />
                 复制提示词
               </>
             )}
@@ -308,54 +308,54 @@ const OptimizationResults = ({ results, originalPrompt, strategy, onLoginRequire
       </div>
 
       {/* Analysis & Scores */}
-      <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
-        <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2">
-          <TrendingUp className="w-5 h-5" />
+      <div className="linear-card p-linear-3xl hover-lift">
+        <h3 className="text-linear-2xl font-semibold linear-text-primary mb-linear-3xl flex items-center gap-linear-lg">
+          <TrendingUp className="w-6 h-6 text-linear-blue-400" />
           分析报告
         </h3>
         
-        <div className="grid md:grid-cols-3 gap-4 mb-6">
-          <div className="text-center p-4 bg-gray-50 rounded-lg">
-            <div className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-medium ${getScoreColor(results.scores.clarity)}`}>
+        <div className="grid md:grid-cols-3 gap-linear-2xl mb-linear-4xl">
+          <div className="text-center p-linear-2xl linear-card-glass hover-lift">
+            <div className={`inline-flex items-center px-linear-lg py-linear-sm rounded-full text-linear-sm font-semibold border ${getScoreColor(results.scores.clarity)}`}>
               {results.scores.clarity}/10 {getScoreLabel(results.scores.clarity)}
             </div>
-            <p className="text-sm text-gray-600 mt-1">清晰度</p>
+            <p className="text-linear-base linear-text-secondary mt-linear-lg font-medium">清晰度</p>
           </div>
           
-          <div className="text-center p-4 bg-gray-50 rounded-lg">
-            <div className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-medium ${getScoreColor(results.scores.specificity)}`}>
+          <div className="text-center p-linear-2xl linear-card-glass hover-lift">
+            <div className={`inline-flex items-center px-linear-lg py-linear-sm rounded-full text-linear-sm font-semibold border ${getScoreColor(results.scores.specificity)}`}>
               {results.scores.specificity}/10 {getScoreLabel(results.scores.specificity)}
             </div>
-            <p className="text-sm text-gray-600 mt-1">具体性</p>
+            <p className="text-linear-base linear-text-secondary mt-linear-lg font-medium">具体性</p>
           </div>
           
-          <div className="text-center p-4 bg-gray-50 rounded-lg">
-            <div className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-medium ${getScoreColor(results.scores.effectiveness)}`}>
+          <div className="text-center p-linear-2xl linear-card-glass hover-lift">
+            <div className={`inline-flex items-center px-linear-lg py-linear-sm rounded-full text-linear-sm font-semibold border ${getScoreColor(results.scores.effectiveness)}`}>
               {results.scores.effectiveness}/10 {getScoreLabel(results.scores.effectiveness)}
             </div>
-            <p className="text-sm text-gray-600 mt-1">有效性</p>
+            <p className="text-linear-base linear-text-secondary mt-linear-lg font-medium">有效性</p>
           </div>
         </div>
 
-        <div className="space-y-4">
-          <div className="bg-blue-50 rounded-lg p-4">
-            <h4 className="font-medium text-blue-900 mb-2 flex items-center gap-2">
-              <Lightbulb className="w-4 h-4" />
+        <div className="space-y-linear-2xl">
+          <div className="linear-card-glass p-linear-2xl border border-linear-blue-500/30">
+            <h4 className="font-semibold text-linear-blue-400 mb-linear-lg flex items-center gap-linear-lg text-linear-base">
+              <Lightbulb className="w-5 h-5" />
               改进说明
             </h4>
-            <p className="text-blue-800 text-sm">{results.analysis.improvements}</p>
+            <p className="text-linear-blue-300 text-linear-base leading-relaxed">{results.analysis.improvements}</p>
           </div>
           
           {results.analysis.issues && results.analysis.issues.length > 0 && (
-            <div className="bg-yellow-50 rounded-lg p-4">
-              <h4 className="font-medium text-yellow-900 mb-2 flex items-center gap-2">
-                <AlertCircle className="w-4 h-4" />
+            <div className="linear-card-glass p-linear-2xl border border-linear-orange-500/30">
+              <h4 className="font-semibold text-linear-orange-400 mb-linear-lg flex items-center gap-linear-lg text-linear-base">
+                <AlertCircle className="w-5 h-5" />
                 原提示词问题
               </h4>
-              <ul className="text-yellow-800 text-sm space-y-1">
+              <ul className="text-linear-orange-300 text-linear-base space-y-linear-sm">
                 {results.analysis.issues.map((issue, index) => (
-                  <li key={index} className="flex items-start gap-2">
-                    <span className="text-yellow-600 mt-1">•</span>
+                  <li key={index} className="flex items-start gap-linear-lg">
+                    <span className="text-linear-orange-400 mt-1 font-bold">•</span>
                     {issue}
                   </li>
                 ))}
@@ -367,31 +367,31 @@ const OptimizationResults = ({ results, originalPrompt, strategy, onLoginRequire
 
       {/* Alternative Suggestions */}
       {results.alternatives && results.alternatives.length > 0 && (
-        <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
-          <h3 className="text-lg font-semibold text-gray-900 mb-4">其他建议</h3>
+        <div className="linear-card p-linear-3xl hover-lift">
+          <h3 className="text-linear-2xl font-semibold linear-text-primary mb-linear-3xl">其他建议</h3>
           
-          <div className="space-y-3">
+          <div className="space-y-linear-lg">
             {results.alternatives.map((alternative, index) => (
               <motion.div
                 key={index}
                 initial={{ opacity: 0, x: -20 }}
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ delay: index * 0.1 }}
-                className="bg-gray-50 rounded-lg p-4 flex items-start justify-between gap-4"
+                className="linear-card-glass p-linear-2xl flex items-start justify-between gap-linear-2xl hover-lift"
               >
                 <div className="flex-1">
-                  <p className="text-gray-800 text-sm mb-2">{alternative.prompt}</p>
-                  <p className="text-gray-600 text-xs">{alternative.reason}</p>
+                  <p className="linear-text-primary text-linear-base mb-linear-lg leading-relaxed">{alternative.prompt}</p>
+                  <p className="linear-text-muted text-linear-sm">{alternative.reason}</p>
                 </div>
                 
                 <button
                   onClick={() => copyToClipboard(alternative.prompt, `alt-${index}`)}
-                  className="flex-shrink-0 p-2 text-gray-500 hover:text-gray-700 hover:bg-gray-200 rounded transition-colors"
+                  className="flex-shrink-0 p-linear-lg linear-text-muted hover:linear-text-secondary hover:bg-white/10 rounded-linear transition-all duration-300 hover-lift"
                 >
                   {copiedIndex === `alt-${index}` ? (
-                    <Check className="w-4 h-4 text-green-600" />
+                    <Check className="w-5 h-5 text-linear-green-400" />
                   ) : (
-                    <Copy className="w-4 h-4" />
+                    <Copy className="w-5 h-5" />
                   )}
                 </button>
               </motion.div>

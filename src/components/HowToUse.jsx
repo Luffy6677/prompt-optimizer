@@ -31,24 +31,24 @@ const HowToUse = () => {
   ]
 
   return (
-    <section className="py-16 bg-gradient-to-r from-blue-50 to-purple-50">
-      <div className="container mx-auto px-4">
+    <section className="py-linear-5xl glass-effect border-y border-white/10">
+      <div className="max-w-6xl mx-auto px-linear-3xl">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}
           viewport={{ once: true }}
-          className="text-center mb-12"
+          className="text-center mb-linear-5xl"
         >
-          <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
+          <h2 className="text-linear-3xl font-bold linear-text-primary mb-linear-2xl">
             如何使用
           </h2>
-          <p className="text-xl text-gray-600 max-w-2xl mx-auto">
-            四个简单步骤，让您的AI提示词更加专业和高效
+          <p className="text-linear-xl linear-text-secondary max-w-3xl mx-auto">
+            四个简单步骤，让您的 AI 提示词更加专业和高效
           </p>
         </motion.div>
 
-        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
+        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-notion-2xl">
           {steps.map((step, index) => (
             <motion.div
               key={step.id}
@@ -58,18 +58,18 @@ const HowToUse = () => {
               viewport={{ once: true }}
               className="text-center group"
             >
-              <div className="relative mb-6">
-                <div className="w-16 h-16 bg-white rounded-full shadow-lg flex items-center justify-center mx-auto group-hover:shadow-xl transition-shadow duration-300">
-                  <div className="text-blue-600">
-                    {step.icon}
+              <div className="relative mb-notion-xl">
+                <div className="w-12 h-12 bg-white rounded-notion shadow-notion flex items-center justify-center mx-auto group-hover:shadow-notion-md transition-shadow duration-300">
+                  <div className="text-notion-blue-500">
+                    {React.cloneElement(step.icon, { className: "w-6 h-6" })}
                   </div>
                 </div>
               </div>
               
-              <h3 className="text-xl font-semibold text-gray-900 mb-3">
+              <h3 className="text-notion-lg font-semibold notion-text-primary mb-notion-sm">
                 {step.title}
               </h3>
-              <p className="text-gray-600 leading-relaxed">
+              <p className="notion-text-secondary leading-relaxed text-notion-sm">
                 {step.description}
               </p>
             </motion.div>
@@ -81,11 +81,11 @@ const HowToUse = () => {
           whileInView={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.5 }}
           viewport={{ once: true }}
-          className="text-center mt-12"
+          className="text-center mt-notion-3xl"
         >
-          <div className="inline-flex items-center gap-2 bg-white px-6 py-3 rounded-full shadow-lg">
-            <Sparkles className="w-5 h-5 text-blue-600" />
-            <span className="text-gray-700 font-medium">专业提示词优化，让AI更懂你的需求</span>
+          <div className="inline-flex items-center gap-notion-sm bg-white px-notion-xl py-notion-sm rounded-notion shadow-notion">
+            <Sparkles className="w-4 h-4 text-notion-blue-500" />
+            <span className="notion-text-secondary font-medium text-notion-sm">专业提示词优化，让 AI 更懂你的需求</span>
           </div>
         </motion.div>
       </div>
